@@ -1,4 +1,4 @@
-package una.ac.cr.frontend;
+package cr.ac.una;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

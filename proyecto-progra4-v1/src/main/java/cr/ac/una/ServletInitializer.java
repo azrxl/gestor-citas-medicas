@@ -1,4 +1,4 @@
-package una.ac.cr.frontend;
+package cr.ac.una;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

@@ -1,4 +1,4 @@
-package una.ac.cr.frontend;
+package cr.ac.una;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

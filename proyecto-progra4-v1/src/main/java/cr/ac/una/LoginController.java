@@ -1,4 +1,4 @@
-package una.ac.cr.frontend.presentation;
+package cr.ac.una;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
