@@ -1,0 +1,123 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    text-align: center;
+}
+
+/* Encabezado */
+header {
+    background: linear-gradient(135deg, #84c5ff, #a0e3ff);
+    color: #fff;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Navegación */
+nav {
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 0 15px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s, color 0.3s;
+}
+
+nav a:hover {
+    background: #007bff;
+    color: white;
+}
+
+/* Sección principal */
+.container {
+    padding: 50px 20px;
+}
+
+.container h1 {
+    font-size: 32px;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.container p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Botones */
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 15px;
+    font-size: 18px;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-login {
+    background: #007bff;
+    color: white;
+}
+
+.btn-login:hover {
+    background: #0056b3;
+}
+
+.btn-register {
+    background: #28a745;
+    color: white;
+}
+
+.btn-register:hover {
+    background: #1e7e34;
+}
+
+.btn-medicos {
+    background: #ffc107;
+    color: #333;
+}
+
+.btn-medicos:hover {
+    background: #e0a800;
+}
+
+.btn-contacto {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-contacto:hover {
+    background: #138496;
+}
+
+/* Pie de página */
+footer {
+    background: linear-gradient(135deg, #84c5ff, #a0e3ff);
+    color: white;
+    padding: 15px;
+    font-size: 14px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

@@ -6,4 +6,5 @@ import cr.ac.una.logic.entities.Usuario;
 
 @Repository
 public interface UsuarioRepository extends CrudRepository<Usuario, String> {
+
 }

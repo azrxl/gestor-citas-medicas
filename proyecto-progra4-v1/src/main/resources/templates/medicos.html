@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Médicos</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="text-center">Lista de Médicos</h2>
+    <div class="row mt-4">
+        <div th:each="medico : ${medicos}" class="col-md-6">
+            <div class="card shadow-sm p-3 mb-3">
+                <div class="row g-3 align-items-center">
+                    <!-- Foto de perfil -->
+                    <div class="col-3">
+                        <img th:src="@{/images/default-profile.jpg}"
+                             class="img-fluid rounded-circle profile-img" alt="">
+                    </div>
+                    <!-- Información del médico -->
+                    <div class="col-6">
+                        <h5 class="mb-1">
+                            <strong th:text="${medico.medicoId}"></strong>
+                            <span class="text-success fw-bold"> - ₡<span th:text="${medico.costoconsulta}"></span></span>
+                        </h5>
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-geo-alt"></i> <span th:text="${medico.localidad.getLocalidadNombre()}"></span>
+                        </p>
+                    </div>
+                    <!-- Horario de consulta -->
+                    <div class="col-3 text-end">
+                        <small class="text-primary">Horario:</small>
+                        <p class="mb-0" th:text="${medico.horariosemanal}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

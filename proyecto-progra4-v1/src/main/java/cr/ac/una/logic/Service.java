@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Service("service")
 public class Service {
-    /* ----------------------------------------------------------- */
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -54,4 +53,15 @@ public class Service {
     }
 
     /* ----------------------------------------------------------- */
+    /* Verificaciones y autenticación de usuario */
+    /* ----------------------------------------------------------- */
+
+    public Usuario autenticarUsuario(String username, String password) {
+        for (Usuario usuario : usuarioRepository.findAll()) {
+            if(usuario.getUsuarioId().equals(username) && usuario.getClave().equals(password)) {
+                return usuario;
+            }
+        }
+        return null;
+    }
 }
