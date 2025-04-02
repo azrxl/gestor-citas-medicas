@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+<header th:insert="~{fragments/header}"></header>
+
+    <div class="main">
+        <h1>Iniciar Sesión</h1>
+
+        <div th:if="${param.error}" style="color:red;">
+            Usuario o contraseña incorrectos.
+        </div>
+        <div th:if="${param.logout}" style="color:green;">
+            Has cerrado sesión correctamente.
+        </div>
+        <div th:if="${param.expired}" style="color:red;">
+            La sesión ha expirado. Por favor, inicia sesión nuevamente.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <label>Usuario:</label>
+            <input type="text" id= "username" name="username"  placeholder="ingrese su usuario" required/>
+            <label>Contraseña:</label>
+            <input type="password" id="password" name="password"  placeholder="ingrese su password" required/>
+            <div class="wrap">
+                <button type="submit">Ingresar</button>
+            </div>
+        </form>
+
+        <p>No está registrado?
+            <a href="/registro" style="text-decoration: none;">
+                Registrarse
+            </a>
+        </p>
+    </div>
+    <footer th:insert="~{fragments/footer}"></footer>
+</body>
+</html>

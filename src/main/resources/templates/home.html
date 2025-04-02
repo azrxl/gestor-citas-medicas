@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <title>Inicio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header th:insert="~{fragments/header}"></header>
+
+<main>
+    <h1>Bienvenido, <span th:text="${username}"></span></h1>
+    <h2>Lista de Médicos Disponibles</h2>
+    <div class="search-bar">
+        <form method="get" th:action="@{/buscar}">
+            <div class="selector">
+                <p>Especialidad:</p>
+                <select name="especialidad" id="especialidad">
+                    <option value="">-- Seleccione Especialidad --</option>
+                    <option th:each="especialidad : ${especialidades}"
+                            th:value="${especialidad}"
+                            th:text="${especialidad}"
+                            th:selected="${especialidad == filtroEspecialidad}">
+                    </option>
+                </select>
+            </div>
+            <div class="selector">
+                <p>Ciudad:</p>
+                <select name="ciudad" id="ciudad">
+                    <option value="">-- Seleccione Ciudad --</option>
+                    <option th:each="ciudad : ${ciudades}"
+                            th:value="${ciudad}"
+                            th:text="${ciudad}"
+                            th:selected="${ciudad == filtroCiudad}">
+                    </option>
+                </select>
+            </div>
+            <button type="submit">Buscar</button>
+        </form>
+    </div>
+    <div class="appointments">
+        <div th:each="medico : ${medicos}" class="appointment">
+            <img th:src="@{/images/medico1.png}" alt="Doctor">
+            <h2 th:text="${medico.nombre + ' ' + medico.apellido + ' ' + medico.cedula}"></h2>
+            <p th:text="${medico.especialidad}"></p>
+            <div class="schedule">
+                <div class="date">Fecha</div>
+                <div class="time">Horario</div>
+                <form method="post" th:action="@{/agendar/{id}(id=${medico.id})}">
+                    <button type="submit">Agendar</button>
+                </form>
+            </div>
+            <p th:text="${medico.localidad}"></p>
+        </div>
+    </div>
+    <form method="post" th:action="@{/logout}">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+</main>
+
+<footer th:insert="~{fragments/footer}"></footer>
+
+</body>
+</html>
+

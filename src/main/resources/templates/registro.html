@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulario de registro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+<header th:insert="~{fragments/header}"></header>
+
+<div class="main">
+    <h1>Formulario de registro</h1>
+
+    <form action="#" th:action="@{/registro}" th:object="${usuario}" method="post">
+        <label>Cédula:</label>
+        <input type="text" th:field="*{cedula}" placeholder="el campo es requerido" required/>
+
+        <label>Nombre:</label>
+        <input type="text" th:field="*{nombre}" placeholder="el campo es requerido" required/>
+
+        <label>Apellido:</label>
+        <input type="text" th:field="*{apellido}" placeholder="el campo es requerido" required/>
+
+        <label>Login:</label>
+        <input type="text" th:field="*{login}" placeholder="el campo es requerido" required/>
+        <div th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></div>
+
+        <label>Password:</label>
+        <input type="password" th:field="*{password}" placeholder="el campo es requerido" required/>
+        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+        <label>Rol:</label>
+        <select th:field="*{rol}">
+            <option value="PACIENTE">Paciente</option>
+            <option value="MEDICO">Médico</option>
+        </select>
+
+        <div class="wrap">
+            <button type="submit">Registrar</button>
+        </div>
+    </form>
+
+    <p><a href="/login" style="text-decoration: none;">Regresar a login</a>
+    </p>
+
+</div>
+<footer th:insert="~{fragments/footer}"></footer>
+</body>
+</html>

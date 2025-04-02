@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+    <link th:href="@{/css/fragments.css}" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="header">
+    <header>
+        <div class="left">
+            <img th:src="@{/images/medical.jpg}" alt="Logo">
+            <span>Medical Appointments</span>
+        </div>
+        <div class="center">
+            <img th:src="@{/images/phone.svg}" alt="Phone">
+            <span>+506 5467 0937</span>
+        </div>
+        <div class="right">
+            <button>About...</button>
+            <button>Search</button>
+            <button>Login</button>
+        </div>
+    </header>
+</div>
+</body>
+</html>
