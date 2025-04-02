@@ -6,40 +6,42 @@ import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-@Service
-public class UsuarioService {
+@org.springframework.stereotype.Service
+public class Service {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, RolRepository rolRepository, BCryptPasswordEncoder passwordEncoder) {
+    public Service(UsuarioRepository usuarioRepository, RolRepository rolRepository, BCryptPasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    public List<Usuario> findByRol(String rol) {
+    public List<Usuario> findUsuarioByRol(String rol) {
         return usuarioRepository.findByRol(rol);
     }
-    public List<Usuario> findByRolAndEspecialidad(String rol, String especialidad) {
+    public List<Usuario> findUsuarioByRolAndEspecialidad(String rol, String especialidad) {
         return usuarioRepository.findByRolAndEspecialidad(rol, especialidad);
     }
-    public List<Usuario> findByRolAndLocalidad(String rol, String localidad) {
+    public List<Usuario> findUsuarioByRolAndLocalidad(String rol, String localidad) {
         return usuarioRepository.findByRolAndLocalidad(rol,localidad);
     }
-    public List<Usuario> findByRolAndEspecialidadAndLocalidad(String rol, String especialidad, String localidad) {
+    public List<Usuario> findUsuarioByRolAndEspecialidadAndLocalidad(String rol, String especialidad, String localidad) {
         return usuarioRepository.findByRolAndEspecialidadAndLocalidad(rol, especialidad, localidad);
     }
 
-    public List<String> findDistinctEspecialidad() {
-        return usuarioRepository.findDistinctEspecialidad();
+    public List<String> findUsuarioDistinctEspecialidad() {
+        return usuarioRepository.findDistinctEspecialidad().stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
-    public List<String> findDistinctLocalidades() {
-        return usuarioRepository.findDistinctLocalidades();
+
+    public List<String> findUsuarioDistinctLocalidades() {
+        return usuarioRepository.findDistinctLocalidades().stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public void registrarUsuario(Usuario usuario) {

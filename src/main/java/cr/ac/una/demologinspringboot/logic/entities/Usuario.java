@@ -58,4 +58,11 @@ public class Usuario {
     @Size(max = 100)
     @Column(name = "localidad", length = 100)
     private String localidad;
+
+    @Size(max = 100)
+    @Column(name = "horario_semanal")
+    private String horarioSemanal;
+
+    @Column(name = "frecuencia_cita")
+    private int frecuenciaCita;
 }
