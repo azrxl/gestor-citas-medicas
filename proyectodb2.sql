@@ -41,16 +41,15 @@ CREATE TABLE usuarios (
 ) ENGINE=InnoDB;
 
 -- Tabla de citas para registrar las citas agendadas
+-- Tabla de citas para registrar las citas agendadas (sin claves foráneas)
 CREATE TABLE citas (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                       id_medico BIGINT NOT NULL,
-                       id_paciente BIGINT NOT NULL,
+                       login_medico VARCHAR(50) NOT NULL,
+                       login_paciente VARCHAR(50) NOT NULL,
                        fecha DATE NOT NULL,
                        hora_inicio TIME NOT NULL,
                        hora_fin TIME NOT NULL,
-                       estado VARCHAR(20) NOT NULL, -- Por ejemplo: 'PENDIENTE', 'COMPLETADA', 'CANCELADA'
-                       FOREIGN KEY (id_medico) REFERENCES usuarios(id),
-                       FOREIGN KEY (id_paciente) REFERENCES usuarios(id)
+                       estado VARCHAR(20) NOT NULL
 ) ENGINE=InnoDB;
 
 -- Insertar roles de prueba
@@ -75,3 +74,11 @@ VALUES
     ('medico1', '$2a$10$dummyhashmedico', 'Juan', 'Pérez', '11111111', 'MEDICO', true,'Cardiología', 150.00, 'San José', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;', 45),
     ('paciente1', '$2a$10$dummyhashpaciente', 'María', 'González', '22222222', 'PACIENTE', true, NULL, NULL, NULL, NULL, NULL),
     ('medico2', '$2a$10$anotherdummyhash', 'Carlos', 'López', '33333333', 'MEDICO', true, 'Pediatría', 100.00, 'Heredia', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;8-12,13-17;', 30);
+
+-- Insertar citas de prueba (sin claves foráneas)
+INSERT INTO citas (login_medico, login_paciente, fecha, hora_inicio, hora_fin, estado)
+VALUES
+    ('medico1', 'paciente1', '2024-03-20', '10:00:00', '10:45:00', 'PENDIENTE'),
+    ('medico1', 'paciente1', '2024-03-20', '11:00:00', '11:45:00', 'PENDIENTE'),
+    ('medico2', 'paciente1', '2024-04-05', '14:00:00', '14:30:00', 'COMPLETADA'),
+    ('medico2', 'paciente1', '2024-04-05', '15:00:00', '15:30:00', 'CANCELADA');

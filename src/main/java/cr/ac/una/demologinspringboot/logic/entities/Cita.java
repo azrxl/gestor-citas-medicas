@@ -19,15 +19,15 @@ public class Cita {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Size(max = 50)
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_medico", nullable = false)
-    private Usuario idMedico;
+    @Column(name = "login_medico", nullable = false, length = 50)
+    private String loginMedico;
 
+    @Size(max = 50)
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_paciente", nullable = false)
-    private Usuario idPaciente;
+    @Column(name = "login_paciente", nullable = false, length = 50)
+    private String loginPaciente;
 
     @NotNull
     @Column(name = "fecha", nullable = false)

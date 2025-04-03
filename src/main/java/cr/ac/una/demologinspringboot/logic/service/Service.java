@@ -1,6 +1,8 @@
 package cr.ac.una.demologinspringboot.logic.service;
 
+import cr.ac.una.demologinspringboot.data.CitaRepository;
 import cr.ac.una.demologinspringboot.data.RolRepository;
+import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.Rol;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
@@ -17,12 +19,14 @@ import java.util.stream.Collectors;
 public class Service {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final CitaRepository citaRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public Service(UsuarioRepository usuarioRepository, RolRepository rolRepository, BCryptPasswordEncoder passwordEncoder) {
+    public Service(UsuarioRepository usuarioRepository, RolRepository rolRepository, CitaRepository citaRepository, BCryptPasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
+        this.citaRepository = citaRepository;
         this.passwordEncoder = passwordEncoder;
     }
     public List<Usuario> findUsuarioByRol(String rol) {
@@ -63,6 +67,16 @@ public class Service {
         return rolRepository.findAll();
     }
 
+    public List<Cita> citaFindAll() {
+        return citaRepository.findAll();
+    }
+
+    public List<Cita> citaFindByLoginMedico(String medico) {
+        return citaRepository.findByLoginMedico(medico);
+    }
+    public List<Cita> citaFindByLoginPaciente(String paciente) {
+        return citaRepository.findByLoginPaciente(paciente);
+    }
 
     public void aprobarMedico(Long id) {
         Optional<Usuario> op = usuarioRepository.findById(id);
