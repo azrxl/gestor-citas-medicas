@@ -47,28 +47,24 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/registro", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login", "/registro", "/css/**", "/js/**", "/images/**", "/home", "/buscar", "/perfilMedico/**").permitAll()
                         // Rutas restringidas para administradores
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // Rutas restringidas para médicos
                         .requestMatchers("/medico/**").hasRole("MEDICO")
+                        // Rutas para agendar citas requieren autenticación
+                        .requestMatchers("/cita/agendar/**", "/cita/confirmar/**", "/cita/cancelar/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .failureHandler((request, response, exception) -> {
-                            if (exception instanceof DisabledException) {
-                                response.sendRedirect("/login?disabled=true");
-                            } else {
-                                response.sendRedirect("/login?error=true");
-                            }
-                        })
-                        .defaultSuccessUrl("/home", true)
+                        // Si se accede a una URL protegida, Spring guarda la solicitud y la redirige luego del login.
+                        // Con false, se reanuda la solicitud guardada si existe.
+                        .defaultSuccessUrl("/home", false)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -78,9 +74,9 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
-
         return http.build();
     }
+
 
 
 }

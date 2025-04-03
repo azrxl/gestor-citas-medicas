@@ -12,7 +12,11 @@
             <img th:src="@{/images/medical.jpg}" alt="Logo">
             <span>Medical Appointments</span>
         </div>
+
         <div class="right">
+            <form th:unless="${#authorization.expression('isAuthenticated()')}" th:action="@{/home}" method="get">
+                <button type="submit">Home</button>
+            </form>
             <form  th:action="@{/buscar}" method="get">
                 <button type="submit">Search</button>
             </form>

@@ -104,17 +104,16 @@ public class Service {
 
     public void actualizarEstadoCita(Long id, String nuevoEstado, String loginPaciente) {
         Optional<Cita> optionalCita = citaRepository.findById(id);
-
         if (optionalCita.isPresent()) {
             Cita cita = optionalCita.get();
             cita.setEstado(nuevoEstado);
-
-            // Solo cambia el paciente si aún no tiene uno asignado
-            if (cita.getLoginPaciente() == null || cita.getLoginPaciente().isEmpty()) {
-                cita.setLoginPaciente(loginPaciente);
-            }
-
+            // Actualizamos siempre el login del paciente con el del usuario actual
+            cita.setLoginPaciente(loginPaciente);
             citaRepository.save(cita);
         }
+    }
+
+    public Optional<Usuario> findUsuarioById(Long medicoId) {
+        return usuarioRepository.findById(medicoId);
     }
 }

@@ -13,20 +13,29 @@
 <main>
     <h1>Perfil de <span th:text="${usuario.nombre + ' ' + usuario.apellido}"></span></h1>
     <div class="profile">
-        <!-- Datos del usuario -->
         <div class="profile-header">
-            <img th:src="@{/images/medico1.png}" alt="Foto de Perfil">
+            <img th:src="@{/images/} + (${usuario.rol == 'PACIENTE'} ? 'usuario_avatar.png' : 'medico_avatar.png')" alt="Foto de Perfil">
             <h2 th:text="${usuario.nombre + ' ' + usuario.apellido}"></h2>
-            <p><strong>Cédula:</strong> <span th:text="${usuario.cedula}"></span></p>
         </div>
+
         <div class="profile-details">
-            <p th:if="${usuario.rol == 'MEDICO'}">
-                <strong>Especialidad:</strong> <span th:text="${usuario.especialidad}"></span>
-            </p>
-            <p><strong>Localidad:</strong> <span th:text="${usuario.localidad}"></span></p>
-            <p th:if="${usuario.rol == 'MEDICO'}">
-                <strong>Costo de Consulta:</strong> <span th:text="${usuario.costoConsulta}"></span>
-            </p>
+            <div th:if="${usuario.rol == 'MEDICO'}">
+                <p>
+                    <strong>Cédula:</strong> <span th:text="${usuario.cedula}"></span>
+                </p>
+                <p>
+                    <strong>Especialidad:</strong> <span th:text="${usuario.especialidad}"></span>
+                </p>
+                <p>
+                    <strong>Localidad:</strong> <span th:text="${usuario.localidad}"></span>
+                </p>
+                <p>
+                    <strong>Costo de Consulta:</strong> <span th:text="${usuario.costoConsulta}"></span>
+                </p>
+            </div>
+            <div th:else>
+            </div>
+        </div>
         </div>
 
         <!-- Barra de búsqueda/filtros -->

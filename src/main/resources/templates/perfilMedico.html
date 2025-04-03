@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <title>Perfil del Médico</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header th:insert="~{fragments/header}"></header>
+
+<main>
+  <h1>Perfil de <span th:text="${medico.nombre + ' ' + medico.apellido}"></span></h1>
+
+  <!-- Información del médico -->
+  <div class="profile">
+    <div class="profile-header">
+      <img th:src="@{/images/medico1.png}" alt="Foto de Perfil">
+      <h2 th:text="${medico.nombre + ' ' + medico.apellido}"></h2>
+      <p><strong>Especialidad:</strong> <span th:text="${medico.especialidad}"></span></p>
+      <p><strong>Localidad:</strong> <span th:text="${medico.localidad}"></span></p>
+      <p><strong>Costo de Consulta:</strong> <span th:text="${medico.costoConsulta}"></span></p>
+    </div>
+  </div>
+
+  <div class="appointments">
+    <h2>Todas las Citas</h2>
+    <div th:if="${citasBlocks != null}" th:each="block : ${citasBlocks}">
+      <div class="date-item">
+        <h3 th:text="${block.date}"></h3>
+      </div>
+      <div class="times">
+        <div class="time-item" th:each="cita : ${block.citas}"
+             th:classappend="${cita.estado != 'ACTIVA'} ? ' disabled' : ''">
+          <!-- Si la cita está activa, se muestra como enlace -->
+          <a th:if="${cita.estado == 'ACTIVA'}"
+             th:href="@{/cita/agendar/{id}(id=${cita.id})}" class="time-item">
+            <span th:text="${cita.horaInicio}"></span>
+          </a>
+          <!-- Si no está activa, se muestra un span sin enlace -->
+          <span th:if="${cita.estado != 'ACTIVA'}" th:text="${cita.horaInicio}"></span>
+        </div>
+      </div>
+    </div>
+    <div th:if="${citasBlocks == null || #lists.isEmpty(citasBlocks)}">
+      <p>No se encontraron citas para este médico.</p>
+    </div>
+  </div>
+
+
+</main>
+
+<footer th:insert="~{fragments/footer}"></footer>
+
+</body>
+</html>

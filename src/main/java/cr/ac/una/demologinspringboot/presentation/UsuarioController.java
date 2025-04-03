@@ -36,11 +36,15 @@ public class UsuarioController {
     }
 
     @PostMapping("/registro")
-    public String registrarUsuario(@Valid Usuario usuario, BindingResult result) {
+    public String registrarUsuario(@Valid Usuario usuario, BindingResult result, Model model,
+                                   @RequestParam("confirmPassword") String confirmPassword) {
         if (result.hasErrors()) {
             return "registro";  // Si hay errores, volver al formulario
         }
-
+        if (!usuario.getPassword().equals(confirmPassword)) {
+            model.addAttribute("confirmPasswordError", "Las contraseñas no coinciden.");
+            return "registro";
+        }
         service.registrarUsuario(usuario);
 
         return "redirect:/login";  // Redirigir al login después de registrarse
@@ -86,18 +90,23 @@ public class UsuarioController {
                          @RequestParam(name = "estado", required = false) String estado,
                          @RequestParam(name = "paciente", required = false) String paciente,
                          @RequestParam(name = "doctor", required = false) String doctor) {
-        Usuario usuarioLogeado = service.findByLogin(session.getAttribute("username").toString());
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : principal.toString();
+        Usuario usuarioLogeado = service.findByLogin(username);
         model.addAttribute("usuario", usuarioLogeado);
 
-        // Si el usuario es MEDICO, aplicamos el filtrado por estado y paciente (como antes)
+        // Declarar la lista de citas que se usará en ambos casos
+        List<Cita> citasHistoricas;
+
         if ("MEDICO".equals(usuarioLogeado.getRol())) {
-            // Guardar filtros de perfil para médico: estado y paciente
+            // Para el médico, se muestran las citas que no están activas.
+            // Además se filtra opcionalmente por paciente.
             guardarFiltrosEnSesionPerfil(session, estado, paciente);
             String filtroEstado = (String) session.getAttribute("estado");
             String filtroPaciente = (String) session.getAttribute("paciente");
 
             List<Cita> citas = service.findCitasByLoginMedico(usuarioLogeado.getLogin());
-            List<Cita> citasHistoricas = citas.stream()
+            citasHistoricas = citas.stream()
                     .filter(c -> !"ACTIVA".equals(c.getEstado()))
                     .collect(Collectors.toList());
             if (filtroEstado != null && !filtroEstado.isEmpty()) {
@@ -107,26 +116,19 @@ public class UsuarioController {
             }
             if (filtroPaciente != null && !filtroPaciente.isEmpty()) {
                 citasHistoricas = citasHistoricas.stream()
-                        .filter(c -> c.getLoginPaciente() != null && c.getLoginPaciente().toLowerCase().contains(filtroPaciente.toLowerCase()))
+                        .filter(c -> c.getLoginPaciente() != null &&
+                                c.getLoginPaciente().toLowerCase().contains(filtroPaciente.toLowerCase()))
                         .collect(Collectors.toList());
             }
-            Map<LocalDate, List<Cita>> citasPorFecha = new TreeMap<>(Comparator.naturalOrder());
-            citasHistoricas.forEach(cita -> citasPorFecha.computeIfAbsent(cita.getFecha(), k -> new ArrayList<>()).add(cita));
-            List<AppointmentBlock> blocks = citasPorFecha.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .map(entry -> new AppointmentBlock(entry.getKey(), entry.getValue()))
-                    .collect(Collectors.toList());
-            model.addAttribute("historicoCitas", blocks);
-        }
-        // Si el usuario es PACIENTE, usamos filtros por estado y doctor
-        else if ("PACIENTE".equals(usuarioLogeado.getRol())) {
-            // Guardar filtros de perfil para paciente: estado y doctor
+        } else if ("PACIENTE".equals(usuarioLogeado.getRol())) {
+            // Para el paciente, se muestran todas las citas (canceladas, confirmadas, etc.),
+            // pero también se filtra opcionalmente por doctor.
             guardarFiltrosEnSesionPaciente(session, estado, doctor);
             String filtroEstado = (String) session.getAttribute("estado");
             String filtroDoctor = (String) session.getAttribute("doctor");
 
             List<Cita> citas = service.findCitasByLoginPaciente(usuarioLogeado.getLogin());
-            List<Cita> citasHistoricas = citas.stream()
+            citasHistoricas = citas.stream()
                     .filter(c -> !"ACTIVA".equals(c.getEstado()))
                     .collect(Collectors.toList());
             if (filtroEstado != null && !filtroEstado.isEmpty()) {
@@ -136,20 +138,64 @@ public class UsuarioController {
             }
             if (filtroDoctor != null && !filtroDoctor.isEmpty()) {
                 citasHistoricas = citasHistoricas.stream()
-                        .filter(c -> c.getLoginMedico() != null && c.getLoginMedico().toLowerCase().contains(filtroDoctor.toLowerCase()))
+                        .filter(c -> c.getLoginMedico() != null &&
+                                c.getLoginMedico().toLowerCase().contains(filtroDoctor.toLowerCase()))
                         .collect(Collectors.toList());
             }
-            Map<LocalDate, List<Cita>> citasPorFecha = new TreeMap<>(Comparator.naturalOrder());
-            citasHistoricas.forEach(cita -> citasPorFecha.computeIfAbsent(cita.getFecha(), k -> new ArrayList<>()).add(cita));
-            List<AppointmentBlock> blocks = citasPorFecha.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .map(entry -> new AppointmentBlock(entry.getKey(), entry.getValue()))
-                    .collect(Collectors.toList());
-            model.addAttribute("historicoCitas", blocks);
+        } else {
+            citasHistoricas = new ArrayList<>();
         }
+
+        // Convertir el histórico de citas en bloques agrupados por fecha
+        Map<LocalDate, List<Cita>> citasPorFecha = obtenerHistoricoCitas(citasHistoricas);
+        List<AppointmentBlock> blocks = convertirABlocks(citasPorFecha);
+        model.addAttribute("historicoCitas", blocks);
+
         return "perfil";
     }
 
+    private Map<LocalDate, List<Cita>> obtenerHistoricoCitas(List<Cita> citas) {
+        return citas.stream()
+                .filter(c -> !"ACTIVA".equals(c.getEstado()))
+                .collect(Collectors.groupingBy(Cita::getFecha, TreeMap::new, Collectors.toList()));
+    }
+    private List<AppointmentBlock> convertirABlocks(Map<LocalDate, List<Cita>> citasPorFecha) {
+        return citasPorFecha.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> new AppointmentBlock(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/perfilMedico/{medicoId}")
+    public String perfilMedico(@PathVariable Long medicoId, HttpSession session, Model model) {
+
+        // Buscar el médico por su ID
+        Optional<Usuario> medico = service.findUsuarioById(medicoId);
+        // Recuperar todas las citas del médico (sin limitar)
+        List<Cita> citas = List.of();
+        if (medico.isPresent()) {
+            citas = service.findCitasByLoginMedico(medico.get().getLogin());
+        }
+        // Agrupar todas las citas por fecha (ordenadas ascendentemente)
+        Map<LocalDate, List<Cita>> citasPorFecha = citas.stream()
+                .collect(Collectors.groupingBy(
+                        Cita::getFecha,
+                        TreeMap::new,  // Para mantener el orden ascendente
+                        Collectors.toList()));
+
+        // Convertir el mapa en una lista de bloques (cada bloque contiene la fecha y las citas de ese día)
+        List<AppointmentBlock> blocks = citasPorFecha.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> new AppointmentBlock(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("medico", medico.get());
+        model.addAttribute("citasBlocks", blocks);
+        model.addAttribute("username", session.getAttribute("username"));
+
+        return "perfilMedico"; // La vista que mostrará el perfil del médico
+    }
 
     private void guardarFiltrosEnSesionHome(HttpSession session, String especialidad, String ciudad) {
         session.setAttribute("especialidad", especialidad != null ? especialidad : session.getAttribute("especialidad"));
@@ -175,10 +221,13 @@ public class UsuarioController {
         List<String> ciudades = service.findUsuarioDistinctLocalidades();
 
         // Estados permitidos para mostrar
-        List<String> estadosPermitidos = Arrays.asList("ACTIVA", "COMPLETADA", "CANCELADA", "PENDIENTE");
+        List<String> estadosPermitidos = List.of("ACTIVA");
 
         // Mapa para almacenar los bloques de citas por médico (solo las 3 fechas más cercanas)
         Map<Long, List<AppointmentBlock>> activeCitas = new HashMap<>();
+
+        // Nueva lista para almacenar los médicos que tienen citas activas
+        List<Usuario> medicosConCitas = new ArrayList<>();
 
         for (Usuario medico : medicos) {
             // Solo médicos con perfil completo tienen horario definido
@@ -203,11 +252,15 @@ public class UsuarioController {
                     .limit(3)
                     .collect(Collectors.toList());
 
-            activeCitas.put(medico.getId(), blocks);
+            // Si hay bloques de citas, añadir el médico a la lista y los bloques al mapa
+            if (!blocks.isEmpty()) {
+                medicosConCitas.add(medico);
+                activeCitas.put(medico.getId(), blocks);
+            }
         }
 
         model.addAttribute("username", session.getAttribute("username"));
-        model.addAttribute("medicos", medicos);
+        model.addAttribute("medicos", medicosConCitas); // Usar la lista de médicos con citas activas
         model.addAttribute("especialidades", especialidades);
         model.addAttribute("ciudades", ciudades);
         model.addAttribute("filtroEspecialidad", especialidad);

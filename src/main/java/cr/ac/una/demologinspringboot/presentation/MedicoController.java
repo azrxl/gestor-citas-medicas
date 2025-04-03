@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/medico")
@@ -68,12 +69,14 @@ public class MedicoController {
 
     @GetMapping("/atender/{id}")
     public String atenderCita(@PathVariable Long id) {
-        service.actualizarEstadoCita(id, "COMPLETADA","");
+        Optional<Cita> cita = service.findCitaById(id);
+        cita.ifPresent(value -> service.actualizarEstadoCita(id, "COMPLETADA", value.getLoginPaciente()));
         return "redirect:/perfil"; // Redirige de nuevo al perfil del usuario
     }
     @GetMapping("/cancelar/{id}")
     public String cancelarCita(@PathVariable Long id) {
-        service.actualizarEstadoCita(id, "CANCELADA","");
+        Optional<Cita> cita = service.findCitaById(id);
+        cita.ifPresent(value -> service.actualizarEstadoCita(id, "CANCELADA", value.getLoginPaciente()));
         return "redirect:/perfil";
     }
 

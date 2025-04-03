@@ -30,6 +30,11 @@
         <input type="password" th:field="*{password}" placeholder="el campo es requerido" required/>
         <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
 
+        <label>Confirmar Password:</label>
+        <input type="password" name="confirmPassword" placeholder="el campo es requerido" required/>
+        <div th:if="${confirmPasswordError}" th:text="${confirmPasswordError}" style="color: red;"></div>
+
+
         <label>Rol:</label>
         <select th:field="*{rol}">
             <option value="PACIENTE">Paciente</option>

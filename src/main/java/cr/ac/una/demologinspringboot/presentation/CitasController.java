@@ -4,6 +4,8 @@ import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.Service;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +41,10 @@ public class CitasController {
     }
     @GetMapping("/confirmar/{id}")
     public String confirmarCita(@PathVariable Long id, HttpSession session, Model model) {
-        Usuario usuarioLogeado = service.findByLogin(session.getAttribute("username").toString());
-        service.actualizarEstadoCita(id, "PENDIENTE", usuarioLogeado.getLogin()); // O el estado que corresponda
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : principal.toString();
+        Usuario usuarioLogeado = service.findByLogin(username);
+        model.addAttribute("usuario", usuarioLogeado);        service.actualizarEstadoCita(id, "PENDIENTE", usuarioLogeado.getLogin()); // O el estado que corresponda
         return "redirect:/perfil"; // O a otra vista que confirme la acción
     }
 

@@ -42,11 +42,12 @@
     </div>
     <div class="appointments">
         <div th:each="medico : ${medicos}" class="appointment">
-            <a th:href="@{#}" class="medico-link">
-            <div class="row-container">
+            <!-- Redirigir al perfil público del médico -->
+            <a th:href="@{/perfilMedico/{id}(id=${medico.id})}" class="medico-link">
+                <div class="row-container">
                     <div class="block1">
-                            <img th:src="@{/images/medico1.png}" alt="Doctor">
-                            <h2 th:text="${medico.nombre + ' ' + medico.apellido + ' ' + medico.costoConsulta}"></h2>
+                        <img th:src="@{/images/medico_avatar.png}" alt="Doctor">
+                        <h2 th:text="${medico.nombre + ' ' + medico.apellido + ' ' + medico.costoConsulta}"></h2>
                     </div>
                     <div class="block2">
                         <p><strong>Especialidad:</strong> <span th:text="${medico.especialidad}"></span></p>
@@ -54,16 +55,15 @@
                     </div>
                 </div>
             </a>
-            <!-- Bloque para mostrar las citasLogic activas del médico -->
-            <!-- Bloque para mostrar las citas activas del médico (3 fechas más cercanas) -->
+            <!-- Bloque para mostrar las citas activas del médico (3 fechas) si aplica en home -->
             <div class="block3" th:if="${activeCitas[medico.id] != null}" th:each="block : ${activeCitas[medico.id]}">
                 <div class="date-item">
-                    <span th:text="${block.date}"></span> <!-- Muestra la fecha -->
+                    <span th:text="${block.date}"></span>
                 </div>
                 <div class="times">
                     <div class="time-item" th:each="cita : ${block.citas}">
                         <a th:href="@{/cita/agendar/{id}(id=${cita.id})}" class="time-item">
-                            <span th:text="${cita.horaInicio}"></span> <!-- Muestra la hora de inicio -->
+                            <span th:text="${cita.horaInicio}"></span>
                         </a>
                     </div>
                 </div>
