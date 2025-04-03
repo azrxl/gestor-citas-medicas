@@ -246,4 +246,6 @@ public class UsuarioController {
         session.invalidate(); // Invalidar la sesión
         return "redirect:/login?logout";
     }
+
+
 }

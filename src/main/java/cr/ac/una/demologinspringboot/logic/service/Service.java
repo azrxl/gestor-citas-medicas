@@ -97,4 +97,24 @@ public class Service {
     public void actualizarUsuario(@Valid Usuario usuario) {
         usuarioRepository.save(usuario);
     }
+
+    public Optional<Cita> findCitaById(Long citaId) {
+        return citaRepository.findById(citaId);
+    }
+
+    public void actualizarEstadoCita(Long id, String nuevoEstado, String loginPaciente) {
+        Optional<Cita> optionalCita = citaRepository.findById(id);
+
+        if (optionalCita.isPresent()) {
+            Cita cita = optionalCita.get();
+            cita.setEstado(nuevoEstado);
+
+            // Solo cambia el paciente si aún no tiene uno asignado
+            if (cita.getLoginPaciente() == null || cita.getLoginPaciente().isEmpty()) {
+                cita.setLoginPaciente(loginPaciente);
+            }
+
+            citaRepository.save(cita);
+        }
+    }
 }

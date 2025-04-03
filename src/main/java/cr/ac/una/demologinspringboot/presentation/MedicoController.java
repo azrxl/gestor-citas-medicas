@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -60,24 +61,22 @@ public class MedicoController {
         usuarioLogeado.setFrecuenciaCita(usuario.getFrecuenciaCita());
         service.actualizarUsuario(usuarioLogeado);
 
+        citasGenerator.generateAndSaveMonthlyCitas(usuarioLogeado.getHorarioSemanal(), usuarioLogeado.getFrecuenciaCita(),usuarioLogeado.getLogin() );
+
         return "redirect:/medico/citas";
     }
 
-    @GetMapping("/citas")
-    public String citas(HttpSession session, Model model) {
-        // Obtener el usuario autenticado
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : "";
-
-        // Agregar el nombre de usuario al modelo (si es necesario)
-        model.addAttribute("username", username);
-
-        // Obtener las citas activas para el médico
-        List<Cita> citasActivas = service.findCitasActivasByMedico(username);
-        model.addAttribute("citasActivas", citasActivas);
-
-        return "medico/citas"; // La vista que mostrará las citas
+    @GetMapping("/atender/{id}")
+    public String atenderCita(@PathVariable Long id) {
+        service.actualizarEstadoCita(id, "COMPLETADA","");
+        return "redirect:/perfil"; // Redirige de nuevo al perfil del usuario
     }
+    @GetMapping("/cancelar/{id}")
+    public String cancelarCita(@PathVariable Long id) {
+        service.actualizarEstadoCita(id, "CANCELADA","");
+        return "redirect:/perfil";
+    }
+
 
     public StringBuilder horarioFormatParser(HttpServletRequest request) {
         // Convertir los horarios de atención a una cadena (horarioSemanal)

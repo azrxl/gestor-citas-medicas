@@ -83,10 +83,12 @@
                             <td th:text="${cita.horaFin}"></td>
                             <td th:text="${cita.estado}"></td>
                             <td>
-                                <!-- Acciones solo para citas pendientes -->
-                                <a th:if="${cita.estado == 'PENDIENTE'}" th:href="@{/cita/atender/{id}(id=${cita.id})}">Atender</a>
-                                <a th:if="${cita.estado == 'PENDIENTE'}" th:href="@{/cita/cancelar/{id}(id=${cita.id})}">Cancelar</a>
-                                <span th:if="${cita.estado != 'PENDIENTE'}">-</span>
+                                <!-- Acciones solo visibles para médicos y si la cita está pendiente -->
+                                <span th:if="${usuario.rol == 'MEDICO' and cita.estado == 'PENDIENTE'}">
+                                    <a th:href="@{/medico/atender/{id}(id=${cita.id})}">Atender</a>
+                                    <a th:href="@{/medico/cancelar/{id}(id=${cita.id})}">Cancelar</a>
+                                </span>
+                                <span th:if="${usuario.rol != 'MEDICO' or cita.estado != 'PENDIENTE'}">-</span>
                             </td>
                         </tr>
                         </tbody>

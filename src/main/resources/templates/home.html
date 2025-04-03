@@ -42,7 +42,7 @@
     </div>
     <div class="appointments">
         <div th:each="medico : ${medicos}" class="appointment">
-            <a th:href="@{/medico/citasLogic/{id}(id=${medico.id})}" class="medico-link">
+            <a th:href="@{#}" class="medico-link">
             <div class="row-container">
                     <div class="block1">
                             <img th:src="@{/images/medico1.png}" alt="Doctor">
@@ -62,7 +62,7 @@
                 </div>
                 <div class="times">
                     <div class="time-item" th:each="cita : ${block.citas}">
-                        <a th:href="@{/agendar/{id}(id=${cita.id})}" class="time-item">
+                        <a th:href="@{/cita/agendar/{id}(id=${cita.id})}" class="time-item">
                             <span th:text="${cita.horaInicio}"></span> <!-- Muestra la hora de inicio -->
                         </a>
                     </div>

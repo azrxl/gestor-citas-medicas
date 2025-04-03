@@ -66,24 +66,42 @@ public class MonthlyCitasGenerator {
      * @param loginMedico Identificador del médico asignado.
      * @return Lista de entidades Cita.
      */
+
     public List<Cita> transformToCitas(Map<String, List<CitaLogic>> monthlyCitas, String loginMedico) {
         List<Cita> citas = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm"); // Permite "8:00" y "08:00"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
+
+        if (monthlyCitas == null || monthlyCitas.isEmpty()) {
+            // Manejar el caso donde monthlyCitas es nulo o vacío
+            return citas; // Retornar una lista vacía
+        }
 
         for (Map.Entry<String, List<CitaLogic>> entry : monthlyCitas.entrySet()) {
-            LocalDate fecha = LocalDate.parse(entry.getKey());
-            for (CitaLogic cl : entry.getValue()) {
-                Cita cita = new Cita();
-                cita.setLoginMedico(loginMedico);
-                cita.setLoginPaciente("DISPONIBLE"); // Indica que aún no ha sido asignada
-                cita.setFecha(fecha);
+            if (entry.getKey() == null || entry.getValue() == null || entry.getValue().isEmpty()) {
+                // Manejar el caso donde la clave o la lista de valores es nula o vacía
+                continue; // Saltar a la siguiente iteración
+            }
 
-                // Ajuste para parsear la hora
-                cita.setHoraInicio(LocalTime.parse(cl.getHorainicio(), formatter));
-                cita.setHoraFin(LocalTime.parse(cl.getHorafin(), formatter));
+            try {
+                LocalDate fecha = LocalDate.parse(entry.getKey());
+                for (CitaLogic cl : entry.getValue()) {
+                    if (cl == null || cl.getHorainicio() == null || cl.getHorafin() == null) {
+                        // Manejar el caso donde cl o las horas son nulas
+                        continue; // Saltar a la siguiente iteración
+                    }
 
-                cita.setEstado("Disponible");
-                citas.add(cita);
+                    Cita cita = new Cita();
+                    cita.setLoginMedico(loginMedico);
+                    cita.setLoginPaciente("DISPONIBLE");
+                    cita.setFecha(fecha);
+                    cita.setHoraInicio(LocalTime.parse(cl.getHorainicio(), formatter));
+                    cita.setHoraFin(LocalTime.parse(cl.getHorafin(), formatter));
+                    cita.setEstado("ACTIVA");
+                    citas.add(cita);
+                }
+            } catch (Exception e) {
+                // Manejar excepciones de parseo o cualquier otro error
+                System.err.println("Error al procesar la fecha: " + entry.getKey() + " - " + e.getMessage());
             }
         }
         return citas;

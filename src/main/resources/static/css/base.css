@@ -204,3 +204,9 @@ main {
 .medico-link:hover {
     text-decoration: underline;
 }
+.disabled {
+    background-color: #d3d3d3 !important; /* Gris claro */
+    color: #6c757d !important; /* Texto más opaco */
+    pointer-events: none; /* Evita que sea clickeable */
+    cursor: not-allowed; /* Cursor de prohibido */
+}

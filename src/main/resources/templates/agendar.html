@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <title>Confirmar Cita</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header th:insert="~{fragments/header}"></header>
+
+<main>
+  <h2>Confirmar Cita</h2>
+
+  <div class="appointment-details">
+    <h3>Información de la Cita</h3>
+    <p><strong>Fecha:</strong> <span th:text="${cita.get().fecha.toString()}"></span></p>
+    <p><strong>Hora de Inicio:</strong> <span th:text="${cita.get().horaInicio}"></span></p>
+    <p><strong>Hora de Fin:</strong> <span th:text="${cita.get().horaFin}"></span></p>
+    <p><strong>Estado:</strong> <span th:text="${cita.get().estado}"></span></p>
+  </div>
+
+  <div class="doctor-details">
+    <h3>Información del Médico</h3>
+    <p><strong>Nombre:</strong> <span th:text="${medico.nombre + ' ' + medico.apellido}"></span></p>
+    <p><strong>Especialidad:</strong> <span th:text="${medico.especialidad}"></span></p>
+    <p><strong>Localidad:</strong> <span th:text="${medico.localidad}"></span></p>
+    <p><strong>Costo de Consulta:</strong> <span th:text="${medico.costoConsulta}"></span></p>
+  </div>
+
+  <div class="actions">
+    <!-- Enlace para confirmar la cita -->
+    <a th:href="@{/cita/confirmar/{id}(id=${cita.get().id})}" class="button">Aceptar</a>
+    <!-- Enlace para cancelar la cita -->
+    <a th:href="@{/cita/cancelar/{id}(id=${cita.get().id})}" class="button">Cancelar</a>
+  </div>
+</main>
+
+<footer th:insert="~{fragments/footer}"></footer>
+
+</body>
+</html>
