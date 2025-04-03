@@ -71,11 +71,15 @@ public class Service {
         return citaRepository.findAll();
     }
 
-    public List<Cita> citaFindByLoginMedico(String medico) {
+    public List<Cita> findCitasByLoginMedico(String medico) {
         return citaRepository.findByLoginMedico(medico);
     }
-    public List<Cita> citaFindByLoginPaciente(String paciente) {
+    public List<Cita> findCitasByLoginPaciente(String paciente) {
         return citaRepository.findByLoginPaciente(paciente);
+    }
+
+    public List<Cita> findCitasActivasByMedico(String loginMedico) {
+        return citaRepository.findByLoginMedicoAndEstado(loginMedico, "ACTIVA");
     }
 
     public void aprobarMedico(Long id) {

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CitaRepository extends JpaRepository<Cita, Long> {
-    public List<Cita> findByLoginMedico(String loginMedico);
-    public List<Cita> findByLoginPaciente(String paciente);
+    List<Cita> findByLoginMedico(String loginMedico);
+    List<Cita> findByLoginPaciente(String paciente);
+    List<Cita> findByLoginMedicoAndEstado(String medico, String estado);
+
 }

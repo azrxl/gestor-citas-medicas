@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Citas</h1>
-</body>
-</html>
+<div class="appointments">
+    <h2>Citas Activas</h2>
+    <div th:if="${#lists.isEmpty(citasActivas)}">
+        <p>No hay citasLogic activas.</p>
+    </div>
+    <div th:if="${!#lists.isEmpty(citasActivas)}">
+        <table>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
+                <th>Estado</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="citaLogic : ${citasActivas}">
+                <td th:text="${citaLogic.fecha}"></td>
+                <td th:text="${citaLogic.horaInicio}"></td>
+                <td th:text="${citaLogic.horaFin}"></td>
+                <td th:text="${citaLogic.estado}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

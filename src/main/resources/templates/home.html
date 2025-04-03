@@ -42,7 +42,7 @@
     </div>
     <div class="appointments">
         <div th:each="medico : ${medicos}" class="appointment">
-            <a th:href="@{/medico/citas/{id}(id=${medico.id})}" class="medico-link">
+            <a th:href="@{/medico/citasLogic/{id}(id=${medico.id})}" class="medico-link">
             <div class="row-container">
                     <div class="block1">
                             <img th:src="@{/images/medico1.png}" alt="Doctor">
@@ -54,60 +54,18 @@
                     </div>
                 </div>
             </a>
-            <div class="block3">
-                <div class="dates">
-                    <div class="date-item">
-                        <span>2024-03-18</span>
-                    </div>
+            <!-- Bloque para mostrar las citasLogic activas del médico -->
+            <!-- Bloque para mostrar las citas activas del médico (3 fechas más cercanas) -->
+            <div class="block3" th:if="${activeCitas[medico.id] != null}" th:each="block : ${activeCitas[medico.id]}">
+                <div class="date-item">
+                    <span th:text="${block.date}"></span> <!-- Muestra la fecha -->
                 </div>
                 <div class="times">
-                    <a href="/agendar/123" class="time-item">
-                        <span>10:00 AM</span>
-                    </a>
-                    <a href="/agendar/123" class="time-item">
-                        <span>11:30 AM</span>
-                    </a>
-                    <a href="/agendar/123" class="time-item">
-                        <span>02:00 PM</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="block3">
-                <div class="dates">
-                    <div class="date-item">
-                        <span>2024-04-03</span>
+                    <div class="time-item" th:each="cita : ${block.citas}">
+                        <a th:href="@{/agendar/{id}(id=${cita.id})}" class="time-item">
+                            <span th:text="${cita.horaInicio}"></span> <!-- Muestra la hora de inicio -->
+                        </a>
                     </div>
-                </div>
-                <div class="times">
-                    <a href="/agendar/456" class="time-item">
-                        <span>09:00 AM</span>
-                    </a>
-                    <a href="/agendar/456" class="time-item">
-                        <span>03:30 PM</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="block3">
-                <div class="dates">
-                    <div class="date-item">
-                        <span>2024-05-17</span>
-                    </div>
-                </div>
-                <div class="times">
-                    <a href="/agendar/789" class="time-item">
-                        <span>08:00 AM</span>
-                    </a>
-                    <a href="/agendar/789" class="time-item">
-                        <span>10:30 AM</span>
-                    </a>
-                    <a href="/agendar/789" class="time-item">
-                        <span>01:00 PM</span>
-                    </a>
-                    <a href="/agendar/789" class="time-item">
-                        <span>04:00 PM</span>
-                    </a>
                 </div>
             </div>
         </div>

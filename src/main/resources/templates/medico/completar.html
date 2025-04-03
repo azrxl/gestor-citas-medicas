@@ -11,7 +11,7 @@
 
 <div class="main">
     <h1>Completa tu Perfil</h1>
-    <form th:action="@{/medico/perfil}" th:object="${usuario}" method="post">
+    <form th:action="@{/medico/completar}" th:object="${usuario}" method="post">
         <div class="login-info">
             <label>Cédula:</label>
             <input type="text" th:field="*{cedula}" placeholder="Ingrese cédula" required readonly/>
@@ -47,8 +47,8 @@
                     <div class="bloque-horario">
                         <label>Turno Mañana:</label>
                         <div class="inputs-horario">
-                            <input type="time" th:name="${dia + 'MananaInicio'}" required>
-                            <input type="time" th:name="${dia + 'MananaFin'}" required>
+                            <input type="time" th:name="${dia + 'MananaInicio'}">
+                            <input type="time" th:name="${dia + 'MananaFin'}">
                         </div>
                     </div>
 
