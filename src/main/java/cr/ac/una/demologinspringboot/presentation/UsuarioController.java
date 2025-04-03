@@ -4,26 +4,25 @@ import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.Service;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class UsuarioController {
 
-    private final PasswordEncoder passwordEncoder;
     private final Service service;
 
-    public UsuarioController(PasswordEncoder passwordEncoder, Service service) {
-        this.passwordEncoder = passwordEncoder;
+    public UsuarioController(Service service) {
         this.service = service;
     }
 
@@ -58,14 +57,34 @@ public class UsuarioController {
             session.setAttribute("username", username);
         }
 
+        // Aquí determinamos si el usuario es administrador.
+        Usuario usuarioLogeado = service.findByLogin(username);
+        if (usuarioLogeado != null) {
+            if ("ADMIN".equals(usuarioLogeado.getRol())) {
+                // Si es administrador, redirige a la vista de médicos NO aprobados
+                return "redirect:/admin/home";
+            } else if ("MEDICO".equals(usuarioLogeado.getRol())) {
+                // Si es médico, verificamos si su perfil está completo
+                if (perfilIncompleto(usuarioLogeado)) {
+                    // Redirigir a la página de perfil para completar los datos
+                    return "redirect:/medico/completar";
+                }
+            }
+        }
         // Guardar en la sesión los filtros ingresados
         guardarFiltrosEnSesion(session, especialidad, ciudad);
-
         // Renderizar la página home con los filtros
         renderizarHome(session, model);
-
         return "home";
     }
+
+    @GetMapping("/perfil")
+    public String perfil(HttpSession session, Model model) {
+        Usuario usuarioLogeado = service.findByLogin(session.getAttribute("username").toString());
+        model.addAttribute("usuario", usuarioLogeado);
+        return "perfil";
+    }
+
 
     private void guardarFiltrosEnSesion(HttpSession session, String especialidad, String ciudad) {
         session.setAttribute("especialidad", especialidad != null ? especialidad : session.getAttribute("especialidad"));
@@ -89,16 +108,31 @@ public class UsuarioController {
     }
 
     private List<Usuario> obtenerMedicosFiltrados(String especialidad, String ciudad) {
+        List<Usuario> medicos;
         if (especialidad != null && !especialidad.isEmpty() && ciudad != null && !ciudad.isEmpty()) {
-            return service.findUsuarioByRolAndEspecialidadAndLocalidad("MEDICO", especialidad, ciudad);
+            medicos = service.findUsuarioByRolAndEspecialidadAndLocalidad("MEDICO", especialidad, ciudad);
         } else if (especialidad != null && !especialidad.isEmpty()) {
-            return service.findUsuarioByRolAndEspecialidad("MEDICO", especialidad);
+            medicos = service.findUsuarioByRolAndEspecialidad("MEDICO", especialidad);
         } else if (ciudad != null && !ciudad.isEmpty()) {
-            return service.findUsuarioByRolAndLocalidad("MEDICO", ciudad);
+            medicos = service.findUsuarioByRolAndLocalidad("MEDICO", ciudad);
         } else {
-            return service.findUsuarioByRol("MEDICO");
+            medicos = service.findUsuarioByRol("MEDICO");
         }
+
+        return medicos.stream()
+                .filter(Usuario::getAprobado)
+                .collect(Collectors.toList());
     }
+
+    private boolean perfilIncompleto(Usuario medico) {
+        // Ejemplo de campos obligatorios para un médico: especialidad, costo de consulta, localidad, horario_semanal y frecuencia_cita
+        return medico.getEspecialidad() == null || medico.getEspecialidad().trim().isEmpty()
+                || medico.getCostoConsulta() == null
+                || medico.getLocalidad() == null || medico.getLocalidad().trim().isEmpty()
+                || medico.getHorarioSemanal() == null || medico.getHorarioSemanal().trim().isEmpty()
+                || medico.getFrecuenciaCita() == null;
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate(); // Invalidar la sesión

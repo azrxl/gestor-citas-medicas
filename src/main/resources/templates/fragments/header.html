@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Header</title>
-    <link th:href="@{/css/fragments.css}" rel="stylesheet">
+    <link th:href="@{/css/fragment.css}" rel="stylesheet">
 </head>
 <body>
 <div th:fragment="header">
@@ -12,14 +12,22 @@
             <img th:src="@{/images/medical.jpg}" alt="Logo">
             <span>Medical Appointments</span>
         </div>
-        <div class="center">
-            <img th:src="@{/images/phone.svg}" alt="Phone">
-            <span>+506 5467 0937</span>
-        </div>
         <div class="right">
-            <button>About...</button>
-            <button>Search</button>
-            <button>Login</button>
+            <form  th:action="@{/buscar}" method="get">
+                <button type="submit">Search</button>
+            </form>
+
+            <form th:unless="${#authorization.expression('isAuthenticated()')}" th:action="@{/login}" method="get">
+                <button type="submit">Login</button>
+            </form>
+
+            <form th:if="${#authorization.expression('isAuthenticated()')}" th:action="@{/perfil}" method="get">
+                <button type="submit"><span th:text="${username}"></span></button>
+            </form>
+
+            <form th:if="${#authorization.expression('isAuthenticated()')}" th:action="@{/logout}" method="post">
+                <button type="submit">Logout</button>
+            </form>
         </div>
     </header>
 </div>

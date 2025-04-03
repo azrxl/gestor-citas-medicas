@@ -2,6 +2,7 @@ package cr.ac.una.demologinspringboot.logic.service;
 
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,10 +23,13 @@ public class UsuarioDetailsService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByLogin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
+        boolean disabled = "MEDICO".equals(usuario.getRol()) && !usuario.getAprobado();
+
         return User.builder()
                 .username(usuario.getLogin())
-                .password(usuario.getPassword())  // Contraseña encriptada
-                .roles("USER") // Puedes personalizar los roles si es necesario
+                .password(usuario.getPassword())
+                .roles(usuario.getRol())
+                .disabled(disabled) // Signal account disabled
                 .build();
     }
 }

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <title>Perfil de Médico</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body>
+
+<header th:insert="~{fragments/header}"></header>
+
+<main>
+    <h1>Perfil de <span th:text="${usuario.nombre + ' ' + usuario.apellido}"></span></h1>
+    <div class="profile">
+        <div class="profile-header">
+            <img th:src="@{/images/medico1.png}" alt="Foto de Perfil">
+            <h2 th:text="${usuario.nombre + ' ' + usuario.apellido}"></h2>
+            <p><strong>Cédula:</strong> <span th:text="${usuario.cedula}"></span></p>
+        </div>
+        <div class="profile-details">
+            <p><strong>Especialidad:</strong> <span th:text="${usuario.especialidad}"></span></p>
+            <p><strong>Localidad:</strong> <span th:text="${usuario.localidad}"></span></p>
+            <p><strong>Costo de Consulta:</strong> <span th:text="${usuario.costoConsulta}"></span></p>
+        </div>
+        <div class="appointment">
+            <h3>Horarios Disponibles:</h3>
+            <div class="block3">
+                <div class="dates">
+                    <a href="/agendar/123" class="date-item">
+                        <span>2024-03-18</span>
+                    </a>
+                </div>
+                <div class="times">
+                    <a href="/agendar/123" class="time-item">
+                        <span>10:00 AM</span>
+                    </a>
+                    <a href="/agendar/123" class="time-item">
+                        <span>11:30 AM</span>
+                    </a>
+                    <a href="/agendar/123" class="time-item">
+                        <span>02:00 PM</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="block3">
+                <div class="dates">
+                    <a href="/agendar/456" class="date-item">
+                        <span>2024-04-03</span>
+                    </a>
+                </div>
+                <div class="times">
+                    <a href="/agendar/456" class="time-item">
+                        <span>09:00 AM</span>
+                    </a>
+                    <a href="/agendar/456" class="time-item">
+                        <span>03:30 PM</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="block3">
+                <div class="dates">
+                    <a href="/agendar/789" class="date-item">
+                        <span>2024-05-17</span>
+                    </a>
+                </div>
+                <div class="times">
+                    <a href="/agendar/789" class="time-item">
+                        <span>08:00 AM</span>
+                    </a>
+                    <a href="/agendar/789" class="time-item">
+                        <span>10:30 AM</span>
+                    </a>
+                    <a href="/agendar/789" class="time-item">
+                        <span>01:00 PM</span>
+                    </a>
+                    <a href="/agendar/789" class="time-item">
+                        <span>04:00 PM</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:insert="~{fragments/footer}"></footer>
+
+</body>
+</html>

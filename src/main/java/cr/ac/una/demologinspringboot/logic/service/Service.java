@@ -4,11 +4,13 @@ import cr.ac.una.demologinspringboot.data.RolRepository;
 import cr.ac.una.demologinspringboot.logic.entities.Rol;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
@@ -25,6 +27,9 @@ public class Service {
     }
     public List<Usuario> findUsuarioByRol(String rol) {
         return usuarioRepository.findByRol(rol);
+    }
+    public List<Usuario> findMedicosNoAprobados() {
+        return usuarioRepository.findByRolAndAprobado("MEDICO", false);
     }
     public List<Usuario> findUsuarioByRolAndEspecialidad(String rol, String especialidad) {
         return usuarioRepository.findByRolAndEspecialidad(rol, especialidad);
@@ -45,15 +50,33 @@ public class Service {
     }
 
     public void registrarUsuario(Usuario usuario) {
+        usuario.setAprobado(!"MEDICO".equals(usuario.getRol()));
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuarioRepository.save(usuario);
     }
 
-    public Usuario buscarPorLogin(String login) {
+    public Usuario findByLogin(String login) {
         return usuarioRepository.findByLogin(login).orElse(null);
     }
 
     public List<Rol> rolFindAll() {
         return rolRepository.findAll();
+    }
+
+
+    public void aprobarMedico(Long id) {
+        Optional<Usuario> op = usuarioRepository.findById(id);
+        if (op.isPresent()) {
+            Usuario medico = op.get();
+            // Asegurarse de que es un MEDICO
+            if ("MEDICO".equals(medico.getRol())) {
+                medico.setAprobado(true);
+                usuarioRepository.save(medico);
+            }
+        }
+    }
+
+    public void actualizarUsuario(@Valid Usuario usuario) {
+        usuarioRepository.save(usuario);
     }
 }

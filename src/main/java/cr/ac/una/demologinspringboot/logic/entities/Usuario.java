@@ -48,6 +48,10 @@ public class Usuario {
     @Column(name = "rol", nullable = false, length = 20)
     private String rol; // Ahora es un String
 
+    @NotNull
+    @Column(name = "aprobado", nullable = false)
+    private Boolean aprobado = false;  // Valor por defecto es false
+
     @Size(max = 100)
     @Column(name = "especialidad", length = 100)
     private String especialidad;
@@ -64,5 +68,5 @@ public class Usuario {
     private String horarioSemanal;
 
     @Column(name = "frecuencia_cita")
-    private int frecuenciaCita;
+    private Integer frecuenciaCita;
 }

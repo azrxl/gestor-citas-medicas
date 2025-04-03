@@ -31,12 +31,13 @@ CREATE TABLE usuarios (
                           nombre VARCHAR(50) NOT NULL,
                           apellido VARCHAR(50) NOT NULL,
                           cedula VARCHAR(20) NOT NULL UNIQUE,
-                          rol VARCHAR(20) NOT NULL, -- Rol como VARCHAR
+                          rol VARCHAR(20) NOT NULL,
+                          aprobado BOOLEAN NOT NULL DEFAULT (false),
                           especialidad VARCHAR(100),
                           costo_consulta DECIMAL(10, 2),
                           localidad VARCHAR(100),
                           horario_semanal VARCHAR(255), -- Ej. "8-12,13-17;8-12,13-17;..."
-                          frecuencia_cita INT         -- Frecuencia de citas en minutos (definida por el médico)
+                          frecuencia_cita INT        -- Frecuencia de citas en minutos (definida por el médico)
 ) ENGINE=InnoDB;
 
 -- Tabla de citas para registrar las citas agendadas
@@ -68,9 +69,9 @@ INSERT INTO permisos (nombre) VALUES
 
 -- Insertar usuarios de prueba (las contraseñas deben estar encriptadas; se usan dummy hashes)
 -- Nota: Para usuarios que no son médicos, 'especialidad', 'costo_consulta', 'horario_semanal' y 'frecuencia_cita' serán NULL.
-INSERT INTO usuarios (login, password, nombre, apellido, cedula, rol, especialidad, costo_consulta, localidad, horario_semanal, frecuencia_cita)
+INSERT INTO usuarios (login, password, nombre, apellido, cedula, rol, aprobado, especialidad, costo_consulta, localidad, horario_semanal, frecuencia_cita)
 VALUES
-    ('admin', '$2a$10$dummyhashadmin', 'Admin', 'System', '00000000', 'ADMIN', NULL, NULL, NULL, NULL, NULL),
-    ('medico1', '$2a$10$dummyhashmedico', 'Juan', 'Pérez', '11111111', 'MEDICO', 'Cardiología', 150.00, 'San José', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;', 45),
-    ('paciente1', '$2a$10$dummyhashpaciente', 'María', 'González', '22222222', 'PACIENTE', NULL, NULL, NULL, NULL, NULL),
-    ('medico2', '$2a$10$anotherdummyhash', 'Carlos', 'López', '33333333', 'MEDICO', 'Pediatría', 100.00, 'Heredia', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;8-12,13-17;', 30);
+    ('admin', '$2a$10$dummyhashadmin', 'Admin', 'System', '00000000', 'ADMIN', true, NULL, NULL, NULL, NULL, NULL),
+    ('medico1', '$2a$10$dummyhashmedico', 'Juan', 'Pérez', '11111111', 'MEDICO', true,'Cardiología', 150.00, 'San José', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;', 45),
+    ('paciente1', '$2a$10$dummyhashpaciente', 'María', 'González', '22222222', 'PACIENTE', true, NULL, NULL, NULL, NULL, NULL),
+    ('medico2', '$2a$10$anotherdummyhash', 'Carlos', 'López', '33333333', 'MEDICO', true, 'Pediatría', 100.00, 'Heredia', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;8-12,13-17;', 30);

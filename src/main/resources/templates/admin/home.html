@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <title>Panel de Aprobación de Médicos</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:insert="~{fragments/header}"></header>
+<main>
+    <h1>Bienvenido, <span th:text="${username}"></span></h1>
+    <h2>Médicos en espera de aprobación</h2>
+    <div class="appointments">
+        <div th:each="medico : ${medicos}" class="appointment">
+            <div class="row-contaniner">
+                <!-- Bloque 1: Foto, Nombre, Apellido y Cédula -->
+                <div class="block1">
+                    <img th:src="@{/images/medico1.png}" alt="Doctor">
+                    <h2 th:text="${medico.nombre + ' ' + medico.apellido}"></h2>
+                </div>
+            </div>
+            <form method="post" th:action="@{/admin/aprobar/{id}(id=${medico.id})}">
+                <button type="submit">Aprobar</button>
+            </form>
+        </div>
+    </div>
+</main>
+<footer th:insert="~{fragments/footer}"></footer>
+</body>
+</html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <title>Inicio</title>
+    <title>Pagina Principal - Medicos</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -42,20 +42,18 @@
     </div>
     <div class="appointments">
         <div th:each="medico : ${medicos}" class="appointment">
-            <div class="row-contaniner">
-                <!-- Bloque 1: Foto, Nombre, Apellido y Cédula -->
-                <div class="block1">
-                    <img th:src="@{/images/medico1.png}" alt="Doctor">
-                    <h2 th:text="${medico.nombre + ' ' + medico.apellido + ' ' + medico.costoConsulta}"></h2>
+            <a th:href="@{/medico/citas/{id}(id=${medico.id})}" class="medico-link">
+            <div class="row-container">
+                    <div class="block1">
+                            <img th:src="@{/images/medico1.png}" alt="Doctor">
+                            <h2 th:text="${medico.nombre + ' ' + medico.apellido + ' ' + medico.costoConsulta}"></h2>
+                    </div>
+                    <div class="block2">
+                        <p><strong>Especialidad:</strong> <span th:text="${medico.especialidad}"></span></p>
+                        <p><strong>Localidad:</strong> <span th:text="${medico.localidad}"></span></p>
+                    </div>
                 </div>
-
-                <!-- Bloque 2: Especialidad y Localidad -->
-                <div class="block2">
-                    <p><strong>Especialidad:</strong> <span th:text="${medico.especialidad}"></span></p>
-                    <p><strong>Localidad:</strong> <span th:text="${medico.localidad}"></span></p>
-                </div>
-            </div>
-            <!-- Bloque 3: Fechas y Horarios -->
+            </a>
             <div class="block3">
                 <div class="dates">
                     <div class="date-item">
@@ -63,39 +61,32 @@
                     </div>
                 </div>
                 <div class="times">
-                    <div class="time-item">
+                    <a href="/agendar/123" class="time-item">
                         <span>10:00 AM</span>
-                    </div>
-                    <div class="time-item">
+                    </a>
+                    <a href="/agendar/123" class="time-item">
                         <span>11:30 AM</span>
-                    </div>
-                    <div class="time-item">
+                    </a>
+                    <a href="/agendar/123" class="time-item">
                         <span>02:00 PM</span>
-                    </div>
+                    </a>
                 </div>
-                <form method="post" action="/agendar/123">
-                    <button type="submit">Agendar</button>
-                </form>
             </div>
 
             <div class="block3">
                 <div class="dates">
-
                     <div class="date-item">
                         <span>2024-04-03</span>
                     </div>
                 </div>
                 <div class="times">
-                    <div class="time-item">
+                    <a href="/agendar/456" class="time-item">
                         <span>09:00 AM</span>
-                    </div>
-                    <div class="time-item">
+                    </a>
+                    <a href="/agendar/456" class="time-item">
                         <span>03:30 PM</span>
-                    </div>
+                    </a>
                 </div>
-                <form method="post" action="/agendar/456">
-                    <button type="submit">Agendar</button>
-                </form>
             </div>
 
             <div class="block3">
@@ -105,33 +96,25 @@
                     </div>
                 </div>
                 <div class="times">
-                    <div class="time-item">
+                    <a href="/agendar/789" class="time-item">
                         <span>08:00 AM</span>
-                    </div>
-                    <div class="time-item">
+                    </a>
+                    <a href="/agendar/789" class="time-item">
                         <span>10:30 AM</span>
-                    </div>
-                    <div class="time-item">
+                    </a>
+                    <a href="/agendar/789" class="time-item">
                         <span>01:00 PM</span>
-                    </div>
-                    <div class="time-item">
+                    </a>
+                    <a href="/agendar/789" class="time-item">
                         <span>04:00 PM</span>
-                    </div>
+                    </a>
                 </div>
-                <form method="post" action="/agendar/789">
-                    <button type="submit">Agendar</button>
-                </form>
             </div>
         </div>
     </div>
-
-    <form method="post" th:action="@{/logout}">
-        <button type="submit">Cerrar Sesión</button>
-    </form>
 </main>
 
 <footer th:insert="~{fragments/footer}"></footer>
 
 </body>
 </html>
-

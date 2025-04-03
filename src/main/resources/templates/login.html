@@ -21,6 +21,9 @@
         <div th:if="${param.expired}" style="color:red;">
             La sesión ha expirado. Por favor, inicia sesión nuevamente.
         </div>
+        <div th:if="${param.disabled}" style="color:red;">
+            Su cuenta aún no ha sido aprobada por un administrador.
+        </div>
 
         <form th:action="@{/login}" method="post">
             <label>Usuario:</label>

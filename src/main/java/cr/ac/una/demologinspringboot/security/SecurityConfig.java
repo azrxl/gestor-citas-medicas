@@ -4,9 +4,14 @@ import cr.ac.una.demologinspringboot.logic.service.UsuarioDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -48,10 +53,21 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/registro", "/css/**", "/js/**", "/images/**").permitAll()
+                        // Rutas restringidas para administradores
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Rutas restringidas para médicos
+                        .requestMatchers("/medico/**").hasRole("MEDICO")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .failureHandler((request, response, exception) -> {
+                            if (exception instanceof DisabledException) {
+                                response.sendRedirect("/login?disabled=true");
+                            } else {
+                                response.sendRedirect("/login?error=true");
+                            }
+                        })
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
