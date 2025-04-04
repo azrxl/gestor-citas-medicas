@@ -28,12 +28,20 @@ main {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    background-color: #f2f2fc;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 95%;
 }
 
 .search-bar form {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     max-width: 600px;
     gap: 10px;
@@ -85,16 +93,18 @@ main {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
     width: 95%;
+
 }
 
 .appointment {
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    border-top: 1px solid #ccc;
     padding-bottom: 20px;
     padding-top: 20px;
     margin-bottom: 20px;
+    background-color: #f7ffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Agrega la sombra difuminada */
 }
 
 .appointment:last-child {
@@ -110,6 +120,13 @@ main {
     width: 100%;
 }
 
+.row-container-home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
 .block1, .block2 {
     margin-right: 20px;
 }
@@ -118,6 +135,9 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-bottom: 2px solid #ccc;
+    max-width: 230px;
+    min-width: 230px;
 }
 
 .block1 img {
@@ -136,6 +156,7 @@ main {
 .block2 {
     display: flex;
     flex-direction: column;
+    justify-content: left;
 }
 
 .block2 p {
@@ -170,7 +191,6 @@ main {
     color: #6c757d;
     font-weight: bold;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    flex-grow: 1;
     text-align: center;
     cursor: default;
 }
@@ -195,10 +215,13 @@ main {
 
 .medico-link {
     text-decoration: none;
+    text-align: left;
     color: inherit;
-    display: block;
-    border-style: inset;
+    display: compact;
+    border-right: 2px solid #ccc;
     padding: 10px;
+    max-width: 240px;
+    min-width: 240px;
 }
 
 .medico-link:hover {

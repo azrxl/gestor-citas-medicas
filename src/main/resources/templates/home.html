@@ -44,7 +44,7 @@
         <div th:each="medico : ${medicos}" class="appointment">
             <!-- Redirigir al perfil público del médico -->
             <a th:href="@{/perfilMedico/{id}(id=${medico.id})}" class="medico-link">
-                <div class="row-container">
+                <div class="row-container-home">
                     <div class="block1">
                         <img th:src="@{/images/medico_avatar.png}" alt="Doctor">
                         <h2 th:text="${medico.nombre + ' ' + medico.apellido + ' ' + medico.costoConsulta}"></h2>

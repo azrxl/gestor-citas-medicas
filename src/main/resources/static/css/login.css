@@ -1,127 +1,139 @@
-/* login.css (Mantén tus estilos existentes) */
-
+/* Estilos específicos para la página de login para darle más "vida" */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background: linear-gradient(135deg, #8bc6ec, #cce0f5); /* Un degradado suave */
+    animation: gradientAnimation 10s ease infinite; /* Animación de fondo */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 15vh 0;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la ventana */
+    padding: 20px; /* Añade un pequeño padding general al body */
     box-sizing: border-box;
-    margin: 0;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .main {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.95); /* Blanco con ligera transparencia */
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    animation: fadeIn 0.5s ease-out forwards; /* Animación de entrada */
     width: 80%;
-    max-width: 1200px;
-    text-align: center;
-    box-sizing: border-box;
+    max-width: 600px; /* Limita el ancho máximo del main */
+    margin: 120px 0; /* Añade márgenes arriba y abajo del main */
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .main h1 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-}
-
-.main form {
-    display: flex;
-    flex-direction: column;
+    color: #377ba8; /* Un azul más atractivo */
+    text-shadow: 1px 1px #e0f2f7; /* Ligera sombra en el texto */
 }
 
 .main form label {
-    text-align: left; /* Asegura la alineación a la izquierda */
-    width: 100%; /* Asegura que ocupen todo el ancho disponible */
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+    text-align: left;
 }
 
 .main form input {
-    margin-top: 5px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
+    padding: 12px;
+    border: 1px solid #b0e0e6; /* Borde más suave */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    width: calc(100% - 24px);
     box-sizing: border-box;
+    transition: border-color 0.3s ease; /* Transición suave del borde */
 }
 
-/* ... otros estilos ... */
-
-.wrap {
-    margin-top: 20px;
+.main form input:focus {
+    border-color: #4dabf5;
+    outline: none;
+    box-shadow: 0 0 5px rgba(67, 170, 255, 0.5); /* Sombra al enfocar */
 }
 
 .wrap button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
+    background-color: rgba(111, 192, 224, 0.94);
+    color: #9c9c9c;
+    font-size: 15px;
     border: none;
-    border-radius: 4px;
+    border-radius: 25px;
     cursor: pointer;
-    font-size: 16px;
-    width: 100%;
+    transition: all 0.3s ease-in-out;
+    padding: 10px 15px;
 }
 
 .wrap button:hover {
-    background-color: #0056b3;
+    background-color: #7dc3fc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ligera sombra al pasar el ratón */
 }
 
 .main p {
-    margin-top: 20px;
+    margin-top: 25px;
+    color: #777;
 }
 
 .main a {
-    color: #007bff;
+    color: #377ba8;
     font-weight: bold;
+    transition: color 0.3s ease;
 }
 
 .main a:hover {
     text-decoration: underline;
+    color: #29628f;
+}
+
+.error-message, .success-message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .error-message {
-    color: red;
-    margin-bottom: 10px;
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ef9a9a;
 }
 
 .success-message {
-    color: green;
-    margin-bottom: 10px;
+    background-color: #e8f5e9;
+    color: #388e3c;
+    border: 1px solid #a5d6a7;
 }
 
-.horario-container {
-    margin-top: 20px; /* Espacio entre el registro y los horarios */
+select:focus {
+    border-color: #4dd0e1; /* Color de foco más claro */
+    outline: none;
+    box-shadow: 0 0 5px rgba(77, 208, 225, 0.5);
 }
 
-.horarios-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columnas */
-    grid-template-rows: repeat(2, auto); /* 2 filas */
-    gap: 20px;
-}
-
-.horarios-grid .dia-horario:nth-child(n+8) {
-    grid-column: 2 / span 3; /* Ocupa las columnas 2, 3 y 4 */
-}
-
-.dia-horario {
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.bloque-horario {
-    margin-bottom: 10px;
-}
-
-.inputs-horario {
-    display: flex;
-    gap: 10px;
-}
-
-.inputs-horario input {
-    flex: 1;
+/* Estilos para las opciones dentro del combobox (opcional) */
+select option {
+    padding: 8px;
+    font-size: 16px;
+    color: #333;
 }

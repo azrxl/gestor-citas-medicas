@@ -14,9 +14,12 @@
         <div th:each="medico : ${medicos}" class="appointment">
             <div class="row-contaniner">
                 <!-- Bloque 1: Foto, Nombre, Apellido y Cédula -->
-                <div class="block1">
-                    <img th:src="@{/images/medico1.png}" alt="Doctor">
-                    <h2 th:text="${medico.nombre + ' ' + medico.apellido}"></h2>
+                <div class="row-container-home">
+                    <div class="block1">
+                        <img th:src="@{/images/medico_avatar.png}" alt="Doctor">
+                        <h2 th:text="${medico.nombre + ' ' + medico.apellido + ' - User: ' + medico.login}"></h2>
+                    </div>
+
                 </div>
             </div>
             <form method="post" th:action="@{/admin/aprobar/{id}(id=${medico.id})}">
