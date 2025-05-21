@@ -64,7 +64,7 @@ public class MedicoController {
 
         citasGenerator.generateAndSaveMonthlyCitas(usuarioLogeado.getHorarioSemanal(), usuarioLogeado.getFrecuenciaCita(),usuarioLogeado.getLogin() );
 
-        return "redirect:/medico/citas";
+        return "redirect:/home";
     }
 
     @GetMapping("/atender/{id}")

@@ -36,77 +36,70 @@
             <div th:else>
             </div>
         </div>
-        </div>
+    </div>
 
-        <!-- Barra de búsqueda/filtros -->
-        <div class="search-bar">
-            <form method="get" th:action="@{/perfil}">
-                <div class="selector">
-                    <p>Estado:</p>
-                    <select name="estado" id="estado">
-                        <option value="">-- Seleccione Estado --</option>
-                        <option value="PENDIENTE" th:selected="${estado == 'PENDIENTE'}">PENDIENTE</option>
-                        <option value="CANCELADA" th:selected="${estado == 'CANCELADA'}">CANCELADA</option>
-                        <option value="COMPLETADA" th:selected="${estado == 'COMPLETADA'}">COMPLETADA</option>
-                    </select>
-                </div>
-                <!-- Mostrar el filtro "Paciente" si el usuario es MEDICO -->
-                <div class="selector" th:if="${usuario.rol == 'MEDICO'}">
-                    <p>Paciente:</p>
-                    <input type="text" name="paciente" id="paciente" placeholder="Nombre del paciente" th:value="${paciente}">
-                </div>
-                <!-- Mostrar el filtro "Doctor" si el usuario es PACIENTE -->
-                <div class="selector" th:if="${usuario.rol == 'PACIENTE'}">
-                    <p>Doctor:</p>
-                    <input type="text" name="doctor" id="doctor" placeholder="Nombre del doctor" th:value="${doctor}">
-                </div>
-                <button type="submit">Filtrar</button>
-            </form>
-        </div>
+    <div class="search-bar">
+        <form method="get" th:action="@{/perfil}">
+            <div class="selector">
+                <p>Estado:</p>
+                <select name="estado" id="estado">
+                    <option value="">-- Seleccione Estado --</option>
+                    <option value="PENDIENTE" th:selected="${estado == 'PENDIENTE'}">PENDIENTE</option>
+                    <option value="CANCELADA" th:selected="${estado == 'CANCELADA'}">CANCELADA</option>
+                    <option value="COMPLETADA" th:selected="${estado == 'COMPLETADA'}">COMPLETADA</option>
+                </select>
+            </div>
+            <div class="selector" th:if="${usuario.rol == 'MEDICO'}">
+                <p>Paciente:</p>
+                <input type="text" name="paciente" id="paciente" placeholder="Nombre del paciente" th:value="${paciente}">
+            </div>
+            <div class="selector" th:if="${usuario.rol == 'PACIENTE'}">
+                <p>Doctor:</p>
+                <input type="text" name="doctor" id="doctor" placeholder="Nombre del doctor" th:value="${doctor}">
+            </div>
+            <button type="submit">Filtrar</button>
+        </form>
+    </div>
 
-        <!-- Histórico de citas -->
-        <div class="appointment">
-            <h3>Histórico de Citas</h3>
-            <div class="historico" th:if="${historicoCitas != null}">
-                <div th:each="block : ${historicoCitas}">
-                    <div class="date-item">
-                        <h3 th:text="${block.date}"></h3>
-                    </div>
-                    <table class="citas-table">
-                        <thead>
-                        <tr>
-                            <!-- En el caso de MEDICO se muestra el paciente; para PACIENTE se muestra el doctor -->
-                            <th th:if="${usuario.rol == 'MEDICO'}">Paciente</th>
-                            <th th:if="${usuario.rol == 'PACIENTE'}">Doctor</th>
-                            <th>Hora Inicio</th>
-                            <th>Hora Fin</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="cita : ${block.citas}">
-                            <td th:if="${usuario.rol == 'MEDICO'}" th:text="${cita.loginPaciente}"></td>
-                            <td th:if="${usuario.rol == 'PACIENTE'}" th:text="${cita.loginMedico}"></td>
-                            <td th:text="${cita.horaInicio}"></td>
-                            <td th:text="${cita.horaFin}"></td>
-                            <td th:text="${cita.estado}"></td>
-                            <td>
-                                <!-- Acciones solo visibles para médicos y si la cita está pendiente -->
-                                <span th:if="${usuario.rol == 'MEDICO' and cita.estado == 'PENDIENTE'}">
-                                    <a th:href="@{/medico/atender/{id}(id=${cita.id})}">Atender</a>
-                                    <a th:href="@{/medico/cancelar/{id}(id=${cita.id})}">Cancelar</a>
-                                </span>
-                                <span th:if="${usuario.rol != 'MEDICO' or cita.estado != 'PENDIENTE'}">-</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+    <div class="appointments">
+        <h2>Histórico de Citas</h2>
+        <div class="historico" th:if="${historicoCitas != null}">
+            <div th:each="block : ${historicoCitas}">
+                <div class="date-item">
+                    <h3 th:text="${block.date}"></h3>
                 </div>
+                <table class="citas-table">
+                    <thead>
+                    <tr>
+                        <th th:if="${usuario.rol == 'MEDICO'}">Paciente</th>
+                        <th th:if="${usuario.rol == 'PACIENTE'}">Doctor</th>
+                        <th>Hora Inicio</th>
+                        <th>Hora Fin</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cita : ${block.citas}">
+                        <td th:if="${usuario.rol == 'MEDICO'}" th:text="${cita.loginPaciente}"></td>
+                        <td th:if="${usuario.rol == 'PACIENTE'}" th:text="${cita.loginMedico}"></td>
+                        <td th:text="${cita.horaInicio}"></td>
+                        <td th:text="${cita.horaFin}"></td>
+                        <td th:text="${cita.estado}"></td>
+                        <td>
+                            <span th:if="${usuario.rol == 'MEDICO' and cita.estado == 'PENDIENTE'}">
+                                <a th:href="@{/medico/atender/{id}(id=${cita.id})}" class="btn-atender">Atender</a>
+                                <a th:href="@{/medico/cancelar/{id}(id=${cita.id})}" class="btn-cancelar">Cancelar</a>
+                            </span>
+                            <span th:if="${usuario.rol != 'MEDICO' or cita.estado != 'PENDIENTE'}">-</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <div th:if="${historicoCitas == null || #lists.isEmpty(historicoCitas)}">
-                <p>No se encontró historial de citas.</p>
-            </div>
+        </div>
+        <div th:if="${historicoCitas == null || #lists.isEmpty(historicoCitas)}">
+            <p>No se encontró historial de citas.</p>
         </div>
     </div>
 </main>
