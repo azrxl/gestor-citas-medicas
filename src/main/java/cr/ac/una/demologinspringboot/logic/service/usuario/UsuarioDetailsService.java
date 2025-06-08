@@ -1,8 +1,7 @@
-package cr.ac.una.demologinspringboot.logic.service;
+package cr.ac.una.demologinspringboot.logic.service.usuario;
 
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,9 +1,9 @@
 -- Crear la base de datos si no existe
-CREATE DATABASE IF NOT EXISTS `proyectodb2`
+CREATE DATABASE IF NOT EXISTS `proyectodb`
     /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
 
 -- Usar la base de datos
-USE `proyectodb2`;
+USE `proyectodb`;
 
 -- Eliminar tablas existentes para recrearlas (opcional, para un script completo y limpio)
 DROP TABLE IF EXISTS citas;
@@ -49,20 +49,6 @@ CREATE TABLE citas (
                        hora_fin TIME NOT NULL,
                        estado VARCHAR(20) NOT NULL
 ) ENGINE=InnoDB;
-
--- Insertar roles de prueba
-INSERT INTO roles (nombre) VALUES
-                               ('ADMIN'),
-                               ('MEDICO'),
-                               ('PACIENTE'),
-                               ('ANONIMO');
-
--- Insertar permisos de prueba
-INSERT INTO permisos (nombre) VALUES
-                                  ('ACCESO_ADMIN'),
-                                  ('GESTION_MEDICOS'),
-                                  ('GESTION_CITAS'),
-                                  ('BUSCAR_MEDICOS');
 
 -- Insertar usuarios de prueba (las contraseñas deben estar encriptadas; se usan dummy hashes)
 -- Nota: Para usuarios que no son médicos, 'especialidad', 'costo_consulta', 'horario_semanal' y 'frecuencia_cita' serán NULL.

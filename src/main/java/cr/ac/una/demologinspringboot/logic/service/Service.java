@@ -1,9 +1,7 @@
 package cr.ac.una.demologinspringboot.logic.service;
 
 import cr.ac.una.demologinspringboot.data.CitaRepository;
-import cr.ac.una.demologinspringboot.data.RolRepository;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
-import cr.ac.una.demologinspringboot.logic.entities.Rol;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
 import jakarta.validation.Valid;
@@ -18,14 +16,12 @@ import java.util.stream.Collectors;
 @org.springframework.stereotype.Service
 public class Service {
     private final UsuarioRepository usuarioRepository;
-    private final RolRepository rolRepository;
     private final CitaRepository citaRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public Service(UsuarioRepository usuarioRepository, RolRepository rolRepository, CitaRepository citaRepository, BCryptPasswordEncoder passwordEncoder) {
+    public Service(UsuarioRepository usuarioRepository, CitaRepository citaRepository, BCryptPasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
-        this.rolRepository = rolRepository;
         this.citaRepository = citaRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -61,14 +57,6 @@ public class Service {
 
     public Usuario findByLogin(String login) {
         return usuarioRepository.findByLogin(login).orElse(null);
-    }
-
-    public List<Rol> rolFindAll() {
-        return rolRepository.findAll();
-    }
-
-    public List<Cita> citaFindAll() {
-        return citaRepository.findAll();
     }
 
     public List<Cita> findCitasByLoginMedico(String medico) {

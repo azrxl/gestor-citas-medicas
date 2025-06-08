@@ -3,7 +3,11 @@ package cr.ac.una.demologinspringboot.presentation;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.Service;
+import cr.ac.una.demologinspringboot.logic.service.citas.CitaService;
+import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -18,34 +22,32 @@ import java.util.Optional;
 @Controller
 public class CitasController {
 
-    private final Service service;
+    private final UsuarioService usuarioService;
+    private final CitaService citaService;
 
-    public CitasController(Service service) {
-        this.service = service;
+    public CitasController(UsuarioService usuarioService, CitaService citaService) {
+        this.usuarioService = usuarioService;
+        this.citaService = citaService;
     }
 
     @GetMapping("/agendar/{citaId}")
     public String agendar(@PathVariable Long citaId, HttpSession session, Model model) {
-        // Buscar la cita por su ID
-        Optional<Cita> cita = service.findCitaById(citaId);
-        // Buscar al médico asociado a la cita
+        Optional<Cita> cita = citaService.findCitaById(citaId);
         Usuario medico = new Usuario();
         if (cita.isPresent()) {
-            medico = service.findByLogin(cita.get().getLoginMedico());
+            medico = usuarioService.findByLogin(cita.get().getLoginMedico());
         }
 
         model.addAttribute("cita", cita);
         model.addAttribute("medico", medico);
 
-        return "agendar"; // La vista "agendar.html"
+        return "agendar";
     }
     @GetMapping("/confirmar/{id}")
-    public String confirmarCita(@PathVariable Long id, HttpSession session, Model model) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : principal.toString();
-        Usuario usuarioLogeado = service.findByLogin(username);
-        model.addAttribute("usuario", usuarioLogeado);        service.actualizarEstadoCita(id, "PENDIENTE", usuarioLogeado.getLogin()); // O el estado que corresponda
-        return "redirect:/perfil"; // O a otra vista que confirme la acción
+    public String confirmarCita(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        citaService.reservarCita(id, username);
+        return "redirect:/perfil";
     }
 
     @GetMapping("/cancelar/{id}")

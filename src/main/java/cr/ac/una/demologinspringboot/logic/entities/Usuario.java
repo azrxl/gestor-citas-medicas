@@ -69,4 +69,16 @@ public class Usuario {
 
     @Column(name = "frecuencia_cita")
     private Integer frecuenciaCita;
+
+    @Transient
+    public boolean isProfileComplete() {
+        if (!"MEDICO".equals(this.getRol())) {
+            return true;
+        }
+        return especialidad != null && !especialidad.trim().isEmpty()
+                && costoConsulta != null
+                && localidad != null && !localidad.trim().isEmpty()
+                && horarioSemanal != null && !horarioSemanal.trim().isEmpty()
+                && frecuenciaCita != null;
+    }
 }

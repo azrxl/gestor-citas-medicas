@@ -1,10 +1,12 @@
 package cr.ac.una.demologinspringboot.dto;
 
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Data
 public class AppointmentBlock {
     private LocalDate date;
     private List<Cita> citas;
@@ -14,11 +16,4 @@ public class AppointmentBlock {
         this.citas = citas;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public List<Cita> getCitas() {
-        return citas;
-    }
 }

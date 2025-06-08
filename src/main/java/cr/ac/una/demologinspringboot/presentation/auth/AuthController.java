@@ -1,8 +1,6 @@
 package cr.ac.una.demologinspringboot.presentation.auth;
 
-import cr.ac.una.demologinspringboot.data.UsuarioRepository;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +28,4 @@ public class AuthController {
         }
         return "login";
     }
-
-
 }

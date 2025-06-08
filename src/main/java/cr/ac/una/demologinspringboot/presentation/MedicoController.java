@@ -1,13 +1,13 @@
 package cr.ac.una.demologinspringboot.presentation;
 
+import cr.ac.una.demologinspringboot.dto.MedicoDto;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
-import cr.ac.una.demologinspringboot.logic.service.MonthlyCitasGenerator;
-import cr.ac.una.demologinspringboot.logic.service.Service;
+import cr.ac.una.demologinspringboot.logic.service.citas.CitaService;
+import cr.ac.una.demologinspringboot.logic.service.citas.SchedulerService;
+import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,99 +22,49 @@ import java.util.Optional;
 @RequestMapping("/medico")
 public class MedicoController {
 
-    private final Service service;
-    private final MonthlyCitasGenerator citasGenerator;
+    private final UsuarioService usuarioService;
+    private final CitaService citaService;
+    private final SchedulerService schedulerService;
+    private static final List<String> DIAS_SEMANA = List.of(
+        "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"
+    );
 
-    public MedicoController(Service service, MonthlyCitasGenerator citasGenerator) {
-        this.service = service;
-        this.citasGenerator = citasGenerator;
+    public MedicoController(UsuarioService usuarioService, CitaService citaService, SchedulerService schedulerService) {
+        this.usuarioService = usuarioService;
+        this.citaService = citaService;
+        this.schedulerService = schedulerService;
     }
 
     @GetMapping("/completar")
-    public String perfil(HttpSession session, Model model) {
-        // Obtener el usuario autenticado
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : "";
+    public String completarPerfil(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        Usuario medico = usuarioService.findByLogin(username);
 
-        // Buscar el usuario (médico) en la base de datos
-        Usuario medico = service.findByLogin(username);
-
-        // Agregarlo al modelo para pre-poblar el formulario
         model.addAttribute("usuario", medico);
-        List<String> diasSemana = Arrays.asList("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo");
-        model.addAttribute("diasSemana", diasSemana);
-        return "medico/completar"; // Devuelve la vista completar.html
+        model.addAttribute("diasSemana", DIAS_SEMANA);
+        return "medico/completar";
     }
 
+    @PostMapping("/completar")
+    public String completarPerfil(MedicoDto medicoDto, HttpServletRequest request, Authentication authentication) {
+        StringBuilder scheduleBuilder = schedulerService.scheduleParser(request);
+        String horarioSemanal = scheduleBuilder.toString();
 
-
-    @PostMapping("completar")
-    public String actualizarPerfil(Usuario usuario, HttpServletRequest request, Model model) {
-        Usuario usuarioLogeado = service.findByLogin(usuario.getLogin());
-        StringBuilder scheduleBuilder = horarioFormatParser(request);
-
-        usuarioLogeado.setEspecialidad(usuario.getEspecialidad());
-        usuarioLogeado.setCostoConsulta(usuario.getCostoConsulta());
-        usuarioLogeado.setLocalidad(usuario.getLocalidad());
-        usuarioLogeado.setHorarioSemanal(scheduleBuilder.toString());
-        usuarioLogeado.setFrecuenciaCita(usuario.getFrecuenciaCita());
-        service.actualizarUsuario(usuarioLogeado);
-
-        citasGenerator.generateAndSaveMonthlyCitas(usuarioLogeado.getHorarioSemanal(), usuarioLogeado.getFrecuenciaCita(),usuarioLogeado.getLogin() );
+        String medicoLogin = authentication.getName();
+        usuarioService.completarMedico(medicoLogin, medicoDto, horarioSemanal);
 
         return "redirect:/home";
     }
 
     @GetMapping("/atender/{id}")
     public String atenderCita(@PathVariable Long id) {
-        Optional<Cita> cita = service.findCitaById(id);
-        cita.ifPresent(value -> service.actualizarEstadoCita(id, "COMPLETADA", value.getLoginPaciente()));
-        return "redirect:/perfil"; // Redirige de nuevo al perfil del usuario
-    }
-    @GetMapping("/cancelar/{id}")
-    public String cancelarCita(@PathVariable Long id) {
-        Optional<Cita> cita = service.findCitaById(id);
-        cita.ifPresent(value -> service.actualizarEstadoCita(id, "CANCELADA", value.getLoginPaciente()));
+        citaService.completarCita(id);
         return "redirect:/perfil";
     }
 
-
-    public StringBuilder horarioFormatParser(HttpServletRequest request) {
-        // Convertir los horarios de atención a una cadena (horarioSemanal)
-        List<String> diasSemana = Arrays.asList("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo");
-        StringBuilder scheduleBuilder = new StringBuilder();
-
-        for (String dia : diasSemana) {
-            // Leer los inputs del día actual
-            String mananaInicio = request.getParameter(dia + "MananaInicio");
-            String mananaFin = request.getParameter(dia + "MananaFin");
-            String tardeInicio = request.getParameter(dia + "TardeInicio");
-            String tardeFin = request.getParameter(dia + "TardeFin");
-
-            List<String> intervals = new ArrayList<>();
-
-            // Si existen datos para el turno mañana, se formatea el intervalo
-            if (mananaInicio != null && !mananaInicio.isEmpty() && mananaFin != null && !mananaFin.isEmpty()) {
-                intervals.add(formatInterval(mananaInicio, mananaFin));
-            }
-            // Si existen datos para el turno tarde, se formatea el intervalo
-            if (tardeInicio != null && !tardeInicio.isEmpty() && tardeFin != null && !tardeFin.isEmpty()) {
-                intervals.add(formatInterval(tardeInicio, tardeFin));
-            }
-
-            // Se unen los intervalos con coma y se añade un punto y coma al final (incluso si el día no tiene horario)
-            String daySchedule = String.join(",", intervals);
-            scheduleBuilder.append(daySchedule).append(";");
-        }
-        return scheduleBuilder;
-    }
-
-    // Métdo auxiliar para formatear un intervalo de tiempo
-    private String formatInterval(String inicio, String fin) {
-        // Se asume que el input es del tipo "HH:mm", por ejemplo, "08:00" y "12:00"
-        // Extraemos solo la hora y eliminamos ceros a la izquierda si se desea
-        String hInicio = inicio.split(":")[0];
-        String hFin = fin.split(":")[0];
-        return hInicio + "-" + hFin;
+    @GetMapping("/cancelar/{id}")
+    public String cancelarCita(@PathVariable Long id) {
+        citaService.cancelarCitaPorMedico(id);
+        return "redirect:/perfil";
     }
 }
