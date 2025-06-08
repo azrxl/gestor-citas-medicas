@@ -2,28 +2,11 @@
 CREATE DATABASE IF NOT EXISTS `proyectodb`
     /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
 
--- Usar la base de datos
 USE `proyectodb`;
 
--- Eliminar tablas existentes para recrearlas (opcional, para un script completo y limpio)
 DROP TABLE IF EXISTS citas;
 DROP TABLE IF EXISTS usuarios;
-DROP TABLE IF EXISTS roles;
-DROP TABLE IF EXISTS permisos;
 
--- Tabla de roles (sin descripción)
-CREATE TABLE roles (
-                       id INT AUTO_INCREMENT PRIMARY KEY,
-                       nombre VARCHAR(20) NOT NULL UNIQUE
-) ENGINE=InnoDB;
-
--- Tabla de permisos (sin descripción)
-CREATE TABLE permisos (
-                          id INT AUTO_INCREMENT PRIMARY KEY,
-                          nombre VARCHAR(50) NOT NULL UNIQUE
-) ENGINE=InnoDB;
-
--- Tabla de usuarios (se agregó la columna 'horario_semanal' para el horario del médico y 'frecuencia_cita' para la duración de cada citaLogic)
 CREATE TABLE usuarios (
                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
                           login VARCHAR(50) NOT NULL UNIQUE,
@@ -36,8 +19,8 @@ CREATE TABLE usuarios (
                           especialidad VARCHAR(100),
                           costo_consulta DECIMAL(10, 2),
                           localidad VARCHAR(100),
-                          horario_semanal VARCHAR(255), -- Ej. "8-12,13-17;8-12,13-17;..."
-                          frecuencia_cita INT        -- Frecuencia de citasLogic en minutos (definida por el médico)
+                          horario_semanal VARCHAR(255),
+                          frecuencia_cita INT
 ) ENGINE=InnoDB;
 
 CREATE TABLE citas (
@@ -50,11 +33,9 @@ CREATE TABLE citas (
                        estado VARCHAR(20) NOT NULL
 ) ENGINE=InnoDB;
 
--- Insertar usuarios de prueba (las contraseñas deben estar encriptadas; se usan dummy hashes)
--- Nota: Para usuarios que no son médicos, 'especialidad', 'costo_consulta', 'horario_semanal' y 'frecuencia_cita' serán NULL.
 INSERT INTO usuarios (id, login, password, nombre, apellido, cedula, rol, aprobado, especialidad, costo_consulta, localidad, horario_semanal, frecuencia_cita)
 VALUES
-    (1, 'admin', '$2a$10$e1qZUgdgrP4.gQNtP8N6ceM/Yxo6V6NF1xCHg.3L3CGYI1BIY3aJi', 'Admin', 'System', '00000000', 'ADMIN', 1, NULL, NULL, NULL, NULL, NULL),
+    (1, 'admin', '$2a$10$cHzCm9Y/ost2IWN3unUEZ.abod.avA1uRon2qTDYXfBjNNgseiplm', 'Admin', 'System', '00000000', 'ADMIN', 1, NULL, NULL, NULL, NULL, NULL),
     (2, 'medico1', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'Juan', 'Pérez', '11111111', 'MEDICO', 1, 'Cardiología', 150.00, 'San José', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;', 45),
     (3, 'paciente1', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'María', 'González', '22222222', 'PACIENTE', 1, NULL, NULL, NULL, NULL, NULL),
     (4, 'medico2', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'Carlos', 'López', '33333333', 'MEDICO', 1, 'Pediatría', 100.00, 'Heredia', '8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;;8-12,13-17;', 30),
@@ -62,7 +43,10 @@ VALUES
     (6, 'paciente3', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'Luis', 'Rodríguez', '55555555', 'PACIENTE', 1, NULL, NULL, NULL, NULL, NULL),
     (7, 'medico3', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'Elena', 'Sánchez', '66666666', 'MEDICO', 1, 'Dermatología', 120.00, 'Alajuela', '8-12,13-17;;8-12,13-17;8-12,13-17;8-12,13-17;8-12,13-17;', 60),
     (8, 'MedSinRegistrar', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'Medico', 'Sin Registrar', '77777777', 'MEDICO', 0, NULL, NULL, NULL, NULL, NULL),
-    (9, 'medico4', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'Medico', 'Aprobado', '888888888', 'MEDICO', 1, NULL, NULL, NULL, NULL, NULL);
+    (9, 'medico4', '$2a$10$zSVtlQv14GAfeKX7cFzm4Oj/SstfcFRYFFPVq8ER4YmnbGMJmQ/8.', 'Medico', 'Aprobado', '888888888', 'MEDICO', 1, NULL, NULL, NULL, NULL, NULL),
+    (10, 'password', '$2a$10$1LTnNflwLMSvJeQcaKeJDu/T53nWO5EirGqZzozlY5tp8rrdvALEi', 'CEO', 'Sexo', '1234567890', 'MEDICO', 0, NULL, NULL, NULL, NULL, NULL),
+    (11, 'a', '$2a$10$cHzCm9Y/ost2IWN3unUEZ.abod.avA1uRon2qTDYXfBjNNgseiplm', 'a', 'a', '111', 'MEDICO', 1, 'Memes', 12500.00, 'San Carlos', '10-00,13-15;;;;;;;', 20),
+    (12, 'b', '$2a$10$2AgfJRy1ULAhT1kfZs9eYOywq3yr9xaENEzP3SrcwIyTScAIYcYoy', 'b', 'b', '222', 'PACIENTE', 1, NULL, NULL, NULL, NULL, NULL);
 
 INSERT INTO citas (id, login_medico, login_paciente, fecha, hora_inicio, hora_fin, estado)
 VALUES
@@ -85,4 +69,34 @@ VALUES
     (17, 'medico1', 'DISPONIBLE', '2025-04-08', '08:00:00', '08:30:00', 'Disponible'),
     (18, 'medico1', 'DISPONIBLE', '2025-04-08', '08:30:00', '09:00:00', 'Disponible'),
     (19, 'medico1', 'DISPONIBLE', '2025-04-08', '09:00:00', '09:30:00', 'Disponible'),
-    (20, 'medico1', 'DISPONIBLE', '2025-04-08', '09:30:00', '10:00:00', 'Disponible');
+    (20, 'medico1', 'DISPONIBLE', '2025-04-08', '09:30:00', '10:00:00', 'Disponible'),
+    (21, 'a', 'a', '2025-06-09', '13:00:00', '13:20:00', 'COMPLETADA'),
+    (22, 'a', 'b', '2025-06-09', '13:20:00', '13:40:00', 'CANCELADA'),
+    (23, 'a', 'DISPONIBLE', '2025-06-09', '13:40:00', '14:00:00', 'ACTIVA'),
+    (24, 'a', 'DISPONIBLE', '2025-06-09', '14:00:00', '14:20:00', 'ACTIVA'),
+    (25, 'a', 'DISPONIBLE', '2025-06-09', '14:20:00', '14:40:00', 'ACTIVA'),
+    (26, 'a', 'b', '2025-06-09', '14:40:00', '15:00:00', 'COMPLETADA'),
+    (27, 'a', 'DISPONIBLE', '2025-06-16', '13:00:00', '13:20:00', 'ACTIVA'),
+    (28, 'a', 'DISPONIBLE', '2025-06-16', '13:20:00', '13:40:00', 'ACTIVA'),
+    (29, 'a', 'DISPONIBLE', '2025-06-16', '13:40:00', '14:00:00', 'ACTIVA'),
+    (30, 'a', 'DISPONIBLE', '2025-06-16', '14:00:00', '14:20:00', 'ACTIVA'),
+    (31, 'a', 'DISPONIBLE', '2025-06-16', '14:20:00', '14:40:00', 'ACTIVA'),
+    (32, 'a', 'DISPONIBLE', '2025-06-16', '14:40:00', '15:00:00', 'ACTIVA'),
+    (33, 'a', 'DISPONIBLE', '2025-06-23', '13:00:00', '13:20:00', 'ACTIVA'),
+    (34, 'a', 'DISPONIBLE', '2025-06-23', '13:20:00', '13:40:00', 'ACTIVA'),
+    (35, 'a', 'DISPONIBLE', '2025-06-23', '13:40:00', '14:00:00', 'ACTIVA'),
+    (36, 'a', 'DISPONIBLE', '2025-06-23', '14:00:00', '14:20:00', 'ACTIVA'),
+    (37, 'a', 'DISPONIBLE', '2025-06-23', '14:20:00', '14:40:00', 'ACTIVA'),
+    (38, 'a', 'DISPONIBLE', '2025-06-23', '14:40:00', '15:00:00', 'ACTIVA'),
+    (39, 'a', 'DISPONIBLE', '2025-06-30', '13:00:00', '13:20:00', 'ACTIVA'),
+    (40, 'a', 'DISPONIBLE', '2025-06-30', '13:20:00', '13:40:00', 'ACTIVA'),
+    (41, 'a', 'DISPONIBLE', '2025-06-30', '13:40:00', '14:00:00', 'ACTIVA'),
+    (42, 'a', 'DISPONIBLE', '2025-06-30', '14:00:00', '14:20:00', 'ACTIVA'),
+    (43, 'a', 'DISPONIBLE', '2025-06-30', '14:20:00', '14:40:00', 'ACTIVA'),
+    (44, 'a', 'DISPONIBLE', '2025-06-30', '14:40:00', '15:00:00', 'ACTIVA'),
+    (45, 'a', 'DISPONIBLE', '2025-07-07', '13:00:00', '13:20:00', 'ACTIVA'),
+    (46, 'a', 'DISPONIBLE', '2025-07-07', '13:20:00', '13:40:00', 'ACTIVA'),
+    (47, 'a', 'DISPONIBLE', '2025-07-07', '13:40:00', '14:00:00', 'ACTIVA'),
+    (48, 'a', 'DISPONIBLE', '2025-07-07', '14:00:00', '14:20:00', 'ACTIVA'),
+    (49, 'a', 'DISPONIBLE', '2025-07-07', '14:20:00', '14:40:00', 'ACTIVA'),
+    (50, 'a', 'DISPONIBLE', '2025-07-07', '14:40:00', '15:00:00', 'ACTIVA');
