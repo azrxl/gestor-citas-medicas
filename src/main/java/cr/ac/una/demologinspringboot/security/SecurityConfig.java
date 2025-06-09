@@ -1,7 +1,7 @@
 package cr.ac.una.demologinspringboot.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cr.ac.una.demologinspringboot.dto.exception.ErrorResponseDTO;
+import cr.ac.una.demologinspringboot.dto.auth.responses.ErrorResponseDTO;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;

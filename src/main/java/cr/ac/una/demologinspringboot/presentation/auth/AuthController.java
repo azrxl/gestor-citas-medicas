@@ -1,16 +1,14 @@
 package cr.ac.una.demologinspringboot.presentation.auth;
 
 
-import cr.ac.una.demologinspringboot.dto.auth.LoginRequestDTO;
-import cr.ac.una.demologinspringboot.dto.auth.LoginResponseDTO;
-import cr.ac.una.demologinspringboot.dto.auth.RegistroDTO;
+import cr.ac.una.demologinspringboot.dto.auth.requests.LoginRequestDTO;
+import cr.ac.una.demologinspringboot.dto.auth.responses.LoginResponseDTO;
+import cr.ac.una.demologinspringboot.dto.auth.requests.RegistroRequestDTO;
 import cr.ac.una.demologinspringboot.dto.entities.UsuarioDTO;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
-import cr.ac.una.demologinspringboot.security.JwtAuthFilter;
 import cr.ac.una.demologinspringboot.security.JwtUtil;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,9 +46,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UsuarioDTO> registrarUsuario(@RequestBody @Valid RegistroDTO registroDTO) {
-        Usuario usuario = new Usuario(registroDTO);
-        Usuario registrado = usuarioService.registrarUsuario(usuario, registroDTO.getConfirmPassword());
+    public ResponseEntity<UsuarioDTO> registrarUsuario(@RequestBody @Valid RegistroRequestDTO registroRequestDTO) {
+        Usuario usuario = new Usuario(registroRequestDTO);
+        Usuario registrado = usuarioService.registrarUsuario(usuario, registroRequestDTO.getConfirmPassword());
         return new ResponseEntity<>(new UsuarioDTO(registrado), HttpStatus.CREATED);
     }
 }

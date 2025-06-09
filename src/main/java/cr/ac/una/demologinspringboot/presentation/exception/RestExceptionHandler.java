@@ -1,9 +1,8 @@
 package cr.ac.una.demologinspringboot.presentation.exception;
 
-import cr.ac.una.demologinspringboot.dto.exception.ErrorResponseDTO;
+import cr.ac.una.demologinspringboot.dto.auth.responses.ErrorResponseDTO;
 import cr.ac.una.demologinspringboot.logic.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

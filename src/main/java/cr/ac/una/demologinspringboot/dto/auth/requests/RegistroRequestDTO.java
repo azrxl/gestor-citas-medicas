@@ -1,8 +1,8 @@
-package cr.ac.una.demologinspringboot.dto.auth;
+package cr.ac.una.demologinspringboot.dto.auth.requests;
 import lombok.Data;
 
 @Data
-public class RegistroDTO {
+public class RegistroRequestDTO {
     private String cedula;
     private String nombre;
     private String apellido;

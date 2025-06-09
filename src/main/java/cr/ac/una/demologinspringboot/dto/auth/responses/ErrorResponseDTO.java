@@ -1,4 +1,4 @@
-package cr.ac.una.demologinspringboot.dto.exception;
+package cr.ac.una.demologinspringboot.dto.auth.responses;
 
 import lombok.Data;
 
