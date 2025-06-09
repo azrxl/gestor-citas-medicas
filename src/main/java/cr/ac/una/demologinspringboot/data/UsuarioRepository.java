@@ -20,3 +20,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("SELECT DISTINCT u.localidad FROM Usuario u")
     List<String> findDistinctLocalidades();
 }
+//hola rico
