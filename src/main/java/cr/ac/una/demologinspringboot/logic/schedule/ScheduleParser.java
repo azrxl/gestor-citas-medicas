@@ -1,43 +1,49 @@
 package cr.ac.una.demologinspringboot.logic.schedule;
 
-import jakarta.servlet.http.HttpServletRequest;
+import cr.ac.una.demologinspringboot.dto.schedule.DiaDTO;
+import cr.ac.una.demologinspringboot.dto.schedule.IntervaloDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
+
 
 @Component
 public class ScheduleParser {
-    public StringBuilder parse(HttpServletRequest request) {
-        List<String> diasSemana = Arrays.asList("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo");
-        StringBuilder scheduleBuilder = new StringBuilder();
+    public String parse(Map<String, DiaDTO> horario) {
+        // Usamos StringJoiner para una construcción de strings más eficiente y limpia.
+        StringJoiner scheduleJoiner = new StringJoiner(";");
 
-        for (String dia : diasSemana) {
-            String mananaInicio = request.getParameter(dia + "MananaInicio");
-            String mananaFin = request.getParameter(dia + "MananaFin");
-            String tardeInicio = request.getParameter(dia + "TardeInicio");
-            String tardeFin = request.getParameter(dia + "TardeFin");
+        // La lógica original se adapta para iterar sobre el Map.
+        for (Map.Entry<String, DiaDTO> entry : horario.entrySet()) {
+            DiaDTO dia = entry.getValue();
             List<String> intervals = new ArrayList<>();
-            if (isValidInterval(mananaInicio, mananaFin)) {
-                intervals.add(formatInterval(mananaInicio, mananaFin));
+
+            if (isValidInterval(dia.getManana())) {
+                intervals.add(formatInterval(dia.getManana()));
             }
-            if (isValidInterval(tardeInicio, tardeFin)) {
-                intervals.add(formatInterval(tardeInicio, tardeFin));
+            if (isValidInterval(dia.getTarde())) {
+                intervals.add(formatInterval(dia.getTarde()));
             }
-            String daySchedule = String.join(",", intervals);
-            scheduleBuilder.append(daySchedule).append(";");
+
+            scheduleJoiner.add(String.join(",", intervals));
         }
-        return scheduleBuilder;
+
+        return scheduleJoiner.toString();
     }
 
-    private boolean isValidInterval(String inicio, String fin) {
-        return inicio != null && !inicio.isEmpty() && fin != null && !fin.isEmpty();
+    // ANÁLISIS Y CAMBIOS: Los métodos privados ahora operan sobre el DTO.
+    private boolean isValidInterval(IntervaloDTO intervalo) {
+        return intervalo != null &&
+                intervalo.getInicio() != null && !intervalo.getInicio().isEmpty() &&
+                intervalo.getFin() != null && !intervalo.getFin().isEmpty();
     }
 
-    private String formatInterval(String inicio, String fin) {
-        String hInicio = inicio.split(":")[0];
-        String hFin = fin.split(":")[0];
+    private String formatInterval(IntervaloDTO intervalo) {
+        String hInicio = intervalo.getInicio().split(":")[0];
+        String hFin = intervalo.getFin().split(":")[0];
         return hInicio + "-" + hFin;
     }
 }

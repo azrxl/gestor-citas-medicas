@@ -1,6 +1,8 @@
 package cr.ac.una.demologinspringboot.logic.service.citas;
 
 import cr.ac.una.demologinspringboot.data.CitaRepository;
+import cr.ac.una.demologinspringboot.dto.entities.MedicoUpdateRequestDTO;
+import cr.ac.una.demologinspringboot.logic.exceptions.InvalidScheduleFormatException;
 import cr.ac.una.demologinspringboot.logic.schedule.ScheduleMapper;
 import cr.ac.una.demologinspringboot.logic.schedule.ScheduleParser;
 import cr.ac.una.demologinspringboot.logic.schedule.Scheduler;
@@ -30,12 +32,29 @@ public class SchedulerService {
     }
 
     public void generateAndSaveMonthlyCitas(String horarioSemanal, int frecuencia, String loginMedico) {
-        Map<String, List<CitaLogic>> monthlyCitas = scheduler.generateSchedule(horarioSemanal, frecuencia);
-        List<Cita> citasParaGuardar = scheduleMapper.transformToCitas(monthlyCitas, loginMedico);
-        citaRepository.saveAll(citasParaGuardar);
+        // ANÁLISIS Y CAMBIOS: Se añaden validaciones de los argumentos de entrada.
+        if (horarioSemanal == null || horarioSemanal.trim().isEmpty()) {
+            throw new InvalidScheduleFormatException("El horario semanal no puede estar vacío.");
+        }
+        if (frecuencia <= 0) {
+            throw new IllegalArgumentException("La frecuencia de la cita debe ser un número positivo.");
+        }
+        if (loginMedico == null || loginMedico.trim().isEmpty()) {
+            throw new IllegalArgumentException("El login del médico no puede estar vacío.");
+        }
+
+        try {
+            Map<String, List<CitaLogic>> monthlyCitas = scheduler.generateSchedule(horarioSemanal, frecuencia);
+            List<Cita> citasParaGuardar = scheduleMapper.transformToCitas(monthlyCitas, loginMedico);
+
+            citaRepository.saveAll(citasParaGuardar);
+
+        } catch (Exception e) {
+            throw new InvalidScheduleFormatException("Error al procesar el formato del horario: " + e.getMessage(), e);
+        }
     }
 
-    public StringBuilder scheduleParser(HttpServletRequest request) {
-        return scheduleParser.parse(request);
+        public String scheduleParser(MedicoUpdateRequestDTO request) {
+            return scheduleParser.parse(request.getHorario());
     }
 }

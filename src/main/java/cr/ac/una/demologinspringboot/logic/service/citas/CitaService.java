@@ -1,11 +1,13 @@
 package cr.ac.una.demologinspringboot.logic.service.citas;
 
 import cr.ac.una.demologinspringboot.data.CitaRepository;
-import cr.ac.una.demologinspringboot.dto.AppointmentBlock;
+import cr.ac.una.demologinspringboot.dto.view.AppointmentBlock;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
+import cr.ac.una.demologinspringboot.logic.exceptions.AppointmentConflictException;
+import cr.ac.una.demologinspringboot.logic.exceptions.InvalidStateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import cr.ac.una.demologinspringboot.logic.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,10 +20,16 @@ import java.util.stream.Collectors;
 public class CitaService {
 
     private final CitaRepository citaRepository;
+    private static final List<String> VALIDOS_ESTADOS_CITA = List.of("ACTIVA", "PENDIENTE", "COMPLETADA");
 
     @Autowired
     public CitaService(CitaRepository citaRepository) {
         this.citaRepository = citaRepository;
+    }
+
+    public Cita findCitaByIdOrThrow(Long id) {
+        return citaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cita con ID " + id + " no encontrada."));
     }
 
     public List<Cita> findAll() {
@@ -44,48 +52,37 @@ public class CitaService {
         return citaRepository.findById(id);
     }
 
-    public void actualizarEstadoCita(Long id, String nuevoEstado, String loginPaciente) {
-        Optional<Cita> optionalCita = citaRepository.findById(id);
-        if (optionalCita.isPresent()) {
-            Cita cita = optionalCita.get();
-            cita.setEstado(nuevoEstado);
-            cita.setLoginPaciente(loginPaciente);
-            citaRepository.save(cita);
+    public Cita reservarCita(Long id, String loginPaciente) {
+        Cita cita = findCitaByIdOrThrow(id);
+        if (!"ACTIVA".equals(cita.getEstado()) || cita.getLoginPaciente() != null) {
+            throw new AppointmentConflictException("La cita con ID " + id + " no está disponible para ser reservada. Estado actual: " + cita.getEstado());
         }
-    }
-    public void reservarCita(Long id, String loginPaciente) {
-        Optional<Cita> cita = this.findCitaById(id);
-        if(cita.isPresent() && "ACTIVA".equals(cita.get().getEstado())) {
-            this.actualizarEstadoCita(id, "PENDIENTE", loginPaciente);
-        } else {
-            throw new IllegalStateException("La cita no está disponible para ser reservada.");
-        }
+        cita.setEstado("PENDIENTE");
+        cita.setLoginPaciente(loginPaciente);
+
+        return citaRepository.save(cita);
     }
 
     public void completarCita(Long id) {
-        Optional<Cita> optionalCita = citaRepository.findById(id);
-        if (optionalCita.isPresent()) {
-            Cita cita = optionalCita.get();
-            cita.setEstado("COMPLETADA");
-            citaRepository.save(cita);
-        }
+        Cita cita = findCitaByIdOrThrow(id);
+        cita.setEstado("COMPLETADA");
+        citaRepository.save(cita);
     }
 
     public void cancelarCitaPorMedico(Long id) {
-        Optional<Cita> optionalCita = citaRepository.findById(id);
-        if (optionalCita.isPresent()) {
-            Cita cita = optionalCita.get();
-            cita.setEstado("CANCELADA");
-            citaRepository.save(cita);
+        Cita cita = findCitaByIdOrThrow(id);
+        if (!"PENDIENTE".equals(cita.getEstado())) {
+            throw new InvalidStateException("Solo se pueden cancelar citas que están pendientes de atención.");
         }
+        cita.setEstado("ACTIVA");
+        cita.setLoginPaciente(null);
+        citaRepository.save(cita);
     }
-    // En CitaService.java
 
     // Reemplaza la lógica de filtrado del perfil del médico
     public List<AppointmentBlock> getHistoricoCitasMedicoComoBlocks(String medicoLogin, String filtroEstado, String filtroPaciente) {
         List<Cita> citas = citaRepository.findByLoginMedico(medicoLogin); // Obtener todas las citas
 
-        // Filtrar en memoria (idealmente, esto se haría con una query de JPA Specification o QueryDSL)
         List<Cita> citasFiltradas = citas.stream()
                 .filter(c -> !"ACTIVA".equals(c.getEstado()))
                 .filter(c -> filtroEstado == null || filtroEstado.isEmpty() || filtroEstado.equals(c.getEstado()))
@@ -95,7 +92,6 @@ public class CitaService {
         return convertirCitasABlocks(citasFiltradas);
     }
 
-    // Reemplaza la lógica de filtrado del perfil del paciente
     public List<AppointmentBlock> getHistoricoCitasPacienteComoBlocks(String pacienteLogin, String filtroEstado, String filtroDoctor) {
         List<Cita> citas = citaRepository.findByLoginPaciente(pacienteLogin);
 
@@ -108,14 +104,12 @@ public class CitaService {
         return convertirCitasABlocks(citasFiltradas);
     }
 
-    // Reemplaza la lógica de perfilMedico
     public List<AppointmentBlock> getHorarioCompletoMedicoComoBlocks(String medicoLogin) {
         List<Cita> citas = citaRepository.findByLoginMedico(medicoLogin);
         return convertirCitasABlocks(citas);
     }
 
 
-    // El helper 'convertirABlocks' ahora vive en el servicio y es privado
     private List<AppointmentBlock> convertirCitasABlocks(List<Cita> citas) {
         Map<LocalDate, List<Cita>> citasPorFecha = citas.stream()
                 .collect(Collectors.groupingBy(Cita::getFecha, TreeMap::new, Collectors.toList()));

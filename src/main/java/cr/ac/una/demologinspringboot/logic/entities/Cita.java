@@ -20,8 +20,7 @@ public class Cita {
     private Long id;
 
     @Size(max = 50)
-    @NotNull
-    @Column(name = "login_medico", nullable = false, length = 50)
+    @Column(name = "login_medico", length = 50)
     private String loginMedico;
 
     @Size(max = 50)

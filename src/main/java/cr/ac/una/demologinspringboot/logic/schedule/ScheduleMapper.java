@@ -37,7 +37,7 @@ public class ScheduleMapper {
                     }
                     Cita cita = new Cita();
                     cita.setLoginMedico(loginMedico);
-                    cita.setLoginPaciente("DISPONIBLE");
+                    cita.setLoginPaciente(null);
                     cita.setFecha(fecha);
                     cita.setHoraInicio(LocalTime.parse(cl.getHorainicio(), formatter));
                     cita.setHoraFin(LocalTime.parse(cl.getHorafin(), formatter));

@@ -1,11 +1,13 @@
 package cr.ac.una.demologinspringboot.logic.entities;
 
+import cr.ac.una.demologinspringboot.dto.auth.RegistroDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -69,6 +71,15 @@ public class Usuario {
 
     @Column(name = "frecuencia_cita")
     private Integer frecuenciaCita;
+
+    public Usuario(RegistroDTO dto) {
+        this.login = dto.getLogin();
+        this.password = dto.getPassword();
+        this.nombre = dto.getNombre();
+        this.apellido = dto.getApellido();
+        this.rol = dto.getRol();
+        this.cedula = dto.getCedula();
+    }
 
     @Transient
     public boolean isProfileComplete() {
