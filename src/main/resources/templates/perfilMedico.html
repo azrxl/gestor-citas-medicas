@@ -4,7 +4,7 @@
   <title>Perfil del Médico</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/frontend-citas-medicas/src/assets/css/style.css}">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
   <!-- Información del médico -->
   <div class="profile">
     <div class="profile-header">
-      <img th:src="@{/images/medico1.png}" alt="Foto de Perfil">
+      <img th:src="@{/frontend-citas-medicas/src/assets/images/medico1.png}" alt="Foto de Perfil">
       <h2 th:text="${medico.nombre + ' ' + medico.apellido}"></h2>
       <p><strong>Especialidad:</strong> <span th:text="${medico.especialidad}"></span></p>
       <p><strong>Localidad:</strong> <span th:text="${medico.localidad}"></span></p>

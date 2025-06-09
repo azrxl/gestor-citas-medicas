@@ -4,7 +4,7 @@
     <title>Perfil de Usuario</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" th:href="@{/frontend-citas-medicas/src/assets/css/profile.css}">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
     <h1>Perfil de <span th:text="${usuario.nombre + ' ' + usuario.apellido}"></span></h1>
     <div class="profile">
         <div class="profile-header">
-            <img th:src="@{/images/} + (${usuario.rol == 'PACIENTE'} ? 'usuario_avatar.png' : 'medico_avatar.png')" alt="Foto de Perfil">
+            <img th:src="@{/frontend-citas-medicas/src/assets/images/} + (${usuario.rol == 'PACIENTE'} ? 'usuario_avatar.png' : 'medico_avatar.png')" alt="Foto de Perfil">
             <h2 th:text="${usuario.nombre + ' ' + usuario.apellido}"></h2>
         </div>
 

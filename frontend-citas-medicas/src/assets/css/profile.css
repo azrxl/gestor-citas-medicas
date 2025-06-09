@@ -1,0 +1,119 @@
+/* profile.css */
+@import url('base.css');
+
+.profile {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 95%;
+    text-align: left;
+}
+.profile {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 95%;
+    text-align: left;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-header img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #333;
+}
+
+.profile-details p {
+    margin: 5px 0;
+    font-size: 1.2em;
+}
+
+.row-container-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Estilos para la tabla */
+.citas-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.citas-table th, .citas-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.citas-table th {
+    background-color: #f2f2f2;
+}
+
+.citas-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Estilos para los botones de acción */
+.btn-atender, .btn-cancelar {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 4px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.btn-atender {
+    background-color: #a5d6a7; /* Verde suave (admisión) */
+}
+
+.btn-cancelar {
+    background-color: #ef9a9a; /* Rojo suave (rechazo) */
+}
+
+.btn-atender:hover {
+    background-color: #81c784;
+}
+
+.btn-cancelar:hover {
+    background-color: #e57373;
+}
+.profile-details p {
+    margin: 5px 0;
+    font-size: 1.2em;
+}
+
+.profile-schedule {
+    margin-top: 20px;
+}
+
+.profile-schedule h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+

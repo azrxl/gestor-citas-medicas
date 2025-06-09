@@ -1,0 +1,111 @@
+/* fragment.css */
+header {
+    width: 100%;
+    background-color: rgba(208, 239, 248, 0.94);
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+}
+
+.left {
+    width: 400px;
+    margin-left: 75px;
+    color: #45d2da;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 25px;
+    font-style: oblique;
+}
+
+.left img {
+    width: 120px;
+    border-radius: 100%;
+}
+
+.center {
+    width: 200px;
+    color: #9c9c9c;
+    display: flex;
+    align-items: center;
+}
+
+.center img {
+    width: 15px;
+    margin-right: 5px;
+    transition: transform 0.3s ease;
+}
+
+.center img:hover {
+    transform: scale(1.5);
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 75px;
+}
+
+button {
+    background-color: rgba(208, 239, 248, 0.94);
+    color: #9c9c9c;
+    font-size: 15px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    padding: 10px 15px;
+}
+
+button:hover {
+    background-color: rgba(155, 226, 248, 0.94);
+    color: white;
+    transform: scale(1.1);
+}
+
+footer {
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    color: white;
+    background-color: black;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 100;
+}
+
+footer p {
+    position: absolute;
+    bottom: -5px;
+    right: 15px;
+    font-size: 12px;
+    align-self: flex-end;
+}
+
+.icons {
+    margin-left: 100px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.icons > {
+    transition: transform 0.3s ease;
+}
+
+.instagram, .facebook, .twitter {
+    width: 25px;
+    transition: transform 0.3s ease;
+}
+
+.instagram:hover, .facebook:hover, .twitter:hover {
+    transform: scale(1.1);
+}
