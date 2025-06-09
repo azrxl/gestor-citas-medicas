@@ -1,15 +1,17 @@
 package cr.ac.una.demologinspringboot.logic.service.usuario;
 
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
-import cr.ac.una.demologinspringboot.dto.AppointmentBlock;
-import cr.ac.una.demologinspringboot.dto.HomeViewModel;
-import cr.ac.una.demologinspringboot.dto.MedicoDto;
+import cr.ac.una.demologinspringboot.dto.entities.MedicoUpdateRequestDTO;
+import cr.ac.una.demologinspringboot.dto.view.AppointmentBlock;
+import cr.ac.una.demologinspringboot.dto.view.HomeViewModel;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
+import cr.ac.una.demologinspringboot.logic.exceptions.DuplicateResourceException;
+import cr.ac.una.demologinspringboot.logic.exceptions.ResourceNotFoundException;
 import cr.ac.una.demologinspringboot.logic.service.citas.CitaService;
 import cr.ac.una.demologinspringboot.logic.service.citas.SchedulerService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,24 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
         this.schedulerService = schedulerService;
         this.citaService = citaService;
+    }
+
+    public Usuario findUsuarioByIdOrThrow(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con ID " + id + " no encontrado."));
+    }
+
+    public Usuario findUsuarioByLoginOrThrow(String login) {
+        return usuarioRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con login '" + login + "' no encontrado."));
+    }
+
+    public Optional<Usuario> findUsuarioById(Long id) {
+        return usuarioRepository.findById(id);
+    }
+
+    public Usuario findByLogin(String login) {
+        return usuarioRepository.findByLogin(login).orElse(null);
     }
 
     public List<Usuario> findUsuarioByRol(String rol) {
@@ -60,60 +80,66 @@ public class UsuarioService {
         return usuarioRepository.findDistinctLocalidades().stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public void registrarUsuario(Usuario usuario, String confirmPassword) {
+    public Usuario registrarUsuario(Usuario usuario, String confirmPassword) {
         if (!usuario.getPassword().equals(confirmPassword)) {
             throw new IllegalArgumentException("Las contraseñas no coinciden.");
         }
-        usuario.setAprobado(!"Medico".equals(usuario.getRol()));
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuarioRepository.save(usuario);
-    }
 
-    public Usuario findByLogin(String login) {
-        return usuarioRepository.findByLogin(login).orElse(null);
-    }
-
-    public void aprobarMedico(Long id) {
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        if (usuario.isPresent()) {
-            Usuario medico = usuario.get();
-            if ("MEDICO".equals(medico.getRol())) {
-                medico.setAprobado(true);
-                usuarioRepository.save(medico);
-            }
-        }
-    }
-
-    public void actualizarUsuario(@Valid Usuario usuario) {
-        usuarioRepository.save(usuario);
-    }
-
-    public Optional<Usuario> findUsuarioById(Long id) {
-        return usuarioRepository.findById(id);
-    }
-
-    public void completarMedico(String login, MedicoDto profileDto, String horarioSemanal) {
-        Usuario medico = this.findByLogin(login);
-        if (medico != null && "MEDICO".equals(medico.getRol())) {
-            medico.setEspecialidad(profileDto.getEspecialidad());
-            medico.setCostoConsulta(profileDto.getCostoConsulta());
-            medico.setLocalidad(profileDto.getLocalidad());
-            medico.setFrecuenciaCita(profileDto.getFrecuenciaCita());
-            medico.setHorarioSemanal(horarioSemanal);
-
-            this.actualizarUsuario(medico);
-
-            schedulerService.generateAndSaveMonthlyCitas(
-                    medico.getHorarioSemanal(),
-                    medico.getFrecuenciaCita(),
-                    medico.getLogin()
+        if (usuarioRepository.findByLogin(usuario.getLogin()).isPresent()) {
+            throw new DuplicateResourceException (
+                    "El nombre de usuario '" + usuario.getLogin() + "' o la cedula '" + usuario.getCedula() + "' ya está en uso."
             );
-        } else {
-            throw new RuntimeException("Usuario no es un médico o no fue encontrado.");
         }
+
+        usuario.setAprobado(!"MEDICO".equals(usuario.getRol()));
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
+        try {
+            usuarioRepository.save(usuario);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateResourceException (
+                    "El nombre de usuario '" + usuario.getLogin() + "' o la cedula '" + usuario.getCedula() + "' ya está en uso."
+            );
+        }
+        return usuario;
     }
 
-    // En UsuarioService.java (necesitarás inyectar CitaService)
+    public void actualizarUsuario(Usuario usuario) {
+        usuarioRepository.save(usuario);
+    }
+
+    public Usuario aprobarMedico(Long id) {
+        Usuario medico = findUsuarioByIdOrThrow(id);
+
+        if (!"MEDICO".equals(medico.getRol())) {
+            throw new IllegalArgumentException("El usuario con ID " + id + " no es un médico y no puede ser aprobado.");
+        }
+
+        medico.setAprobado(true);
+        return usuarioRepository.save(medico);
+    }
+
+    public Usuario completarMedico(String login, MedicoUpdateRequestDTO profileDto, String horarioSemanal) {
+        Usuario medico = this.findUsuarioByLoginOrThrow(login);
+
+        if (!"MEDICO".equals(medico.getRol())) {
+            throw new IllegalArgumentException("Solo los usuarios con rol MEDICO pueden completar su perfil.");
+        }
+
+        medico.setEspecialidad(profileDto.getEspecialidad());
+        medico.setCostoConsulta(profileDto.getCostoConsulta());
+        medico.setLocalidad(profileDto.getLocalidad());
+        medico.setFrecuenciaCita(profileDto.getFrecuenciaCita());
+        medico.setHorarioSemanal(horarioSemanal);
+
+        this.actualizarUsuario(medico);
+        schedulerService.generateAndSaveMonthlyCitas(
+                medico.getHorarioSemanal(),
+                medico.getFrecuenciaCita(),
+                medico.getLogin()
+        );
+        return medico;
+    }
 
     public HomeViewModel prepararHomeViewModel(String especialidad, String ciudad) {
         List<Usuario> medicos = this.findActiveAndApprovedMedicos(especialidad, ciudad);

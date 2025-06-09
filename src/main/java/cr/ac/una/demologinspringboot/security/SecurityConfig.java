@@ -1,23 +1,34 @@
 package cr.ac.una.demologinspringboot.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import cr.ac.una.demologinspringboot.dto.exception.ErrorResponseDTO;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     private final UsuarioDetailsService usuarioDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;
+    private final ObjectMapper objectMapper;
 
-    public SecurityConfig(UsuarioDetailsService usuarioDetailsService) {
+    public SecurityConfig(UsuarioDetailsService usuarioDetailsService, JwtAuthFilter jwtAuthFilter, ObjectMapper objectMapper) {
         this.usuarioDetailsService = usuarioDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.objectMapper = objectMapper;
     }
 
     @Bean
@@ -45,30 +56,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable) // no CSRF para APIs stateless
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/registro", "/css/**", "/js/**", "/images/**", "/home", "/buscar", "/perfilMedico/**").permitAll()
-                        // Rutas restringidas para administradores
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // Rutas restringidas para médicos
-                        .requestMatchers("/medico/**").hasRole("MEDICO")
-                        // Rutas para agendar citas requieren autenticación
-                        .requestMatchers("/cita/agendar/**", "/cita/confirmar/**", "/cita/cancelar/**").authenticated()
+                        .requestMatchers("/api/auth/**").permitAll() // permitir todos los endpoints del login y register
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/medicos/**").hasRole("MEDICO")
+                        .requestMatchers(("/api/citas/**")).hasRole("PACIENTE")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        // Si se accede a una URL protegida, Spring guarda la solicitud y la redirige luego del login.
-                        // Con false, se reanuda la solicitud guardada si existe.
-                        .defaultSuccessUrl("/home", false)
-                        .permitAll()
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exceptions -> exceptions
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                                    HttpServletResponse.SC_FORBIDDEN, // 403
+                                    "Forbidden",
+                                    "No tienes los permisos necesarios para acceder a este recurso.",
+                                    request.getRequestURI()
+                            );
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+                        })
                 )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                );
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

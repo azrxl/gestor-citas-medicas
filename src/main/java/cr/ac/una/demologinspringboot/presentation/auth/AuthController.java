@@ -1,31 +1,56 @@
 package cr.ac.una.demologinspringboot.presentation.auth;
 
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import cr.ac.una.demologinspringboot.dto.auth.LoginRequestDTO;
+import cr.ac.una.demologinspringboot.dto.auth.LoginResponseDTO;
+import cr.ac.una.demologinspringboot.dto.auth.RegistroDTO;
+import cr.ac.una.demologinspringboot.dto.entities.UsuarioDTO;
+import cr.ac.una.demologinspringboot.logic.entities.Usuario;
+import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
+import cr.ac.una.demologinspringboot.security.JwtAuthFilter;
+import cr.ac.una.demologinspringboot.security.JwtUtil;
+import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequestMapping("/api/auth")
 public class AuthController {
-    @GetMapping("/login")
-    public String mostrarLogin(@RequestParam(value = "error", required = false) String error,
-                               @RequestParam(value = "logout", required = false) String logout,
-                               @RequestParam(value = "expired", required = false) String expired,
-                               @RequestParam(value = "notApproved", required = false) String notApproved,
-                               Model model) {
-        if (error != null) {
-            model.addAttribute("mensaje", "Usuario o contraseña incorrectos.");
-        }
-        if (logout != null) {
-            model.addAttribute("mensaje", "Has cerrado sesión correctamente.");
-        }
-        if (expired != null) {
-            model.addAttribute("mensaje", "La sesión ha expirado. Por favor, inicia sesión nuevamente.");
-        }
-        if (notApproved != null) {
-            model.addAttribute("mensaje", "Su cuenta aún no ha sido aprobada por un administrador.");
-        }
-        return "login";
+    private final UsuarioService usuarioService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+
+    @Autowired
+    public AuthController(UsuarioService usuarioService, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+        this.usuarioService = usuarioService;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> loginUsuario(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequestDTO.getLogin(),
+                        loginRequestDTO.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtUtil.generateToken(authentication);
+        return ResponseEntity.ok(new LoginResponseDTO(token, loginRequestDTO.getLogin()));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UsuarioDTO> registrarUsuario(@RequestBody @Valid RegistroDTO registroDTO) {
+        Usuario usuario = new Usuario(registroDTO);
+        Usuario registrado = usuarioService.registrarUsuario(usuario, registroDTO.getConfirmPassword());
+        return new ResponseEntity<>(new UsuarioDTO(registrado), HttpStatus.CREATED);
     }
 }

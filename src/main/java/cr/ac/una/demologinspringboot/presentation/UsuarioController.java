@@ -1,7 +1,7 @@
 package cr.ac.una.demologinspringboot.presentation;
 
-import cr.ac.una.demologinspringboot.dto.AppointmentBlock;
-import cr.ac.una.demologinspringboot.dto.HomeViewModel;
+import cr.ac.una.demologinspringboot.dto.view.AppointmentBlock;
+import cr.ac.una.demologinspringboot.dto.view.HomeViewModel;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.citas.CitaService;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
@@ -50,7 +50,6 @@ public class UsuarioController {
 
         return "redirect:/login";
     }
-    // En UsuarioController.java
 
     @GetMapping({"/", "/home", "/buscar"})
     public String home(Authentication authentication, Model model,

@@ -1,41 +1,45 @@
 package cr.ac.una.demologinspringboot.presentation;
 
+import cr.ac.una.demologinspringboot.dto.entities.MedicoDTO;
+import cr.ac.una.demologinspringboot.dto.entities.MedicoPendienteDTO;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Controller
-@RequestMapping("/admin")
+@RestController
+@RequestMapping("/api/admin")
 public class AdminController {
-
     private final UsuarioService usuarioService;
 
     public AdminController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
-    @GetMapping("/home")
-    public String mostrarMedicosNoAprobados(Authentication authentication, Model model) {
+    /**
+     * @return una lista de todos los médicos pendientes de aprobación.
+     */
+    @GetMapping("/medicos/pendientes")
+    public ResponseEntity<List<MedicoPendienteDTO>> getMedicosPendientes() {
         List<Usuario> medicosNoAprobados = usuarioService.findMedicosNoAprobados();
-        if (authentication != null) {
-            model.addAttribute("username", authentication.getName());
+        List<MedicoPendienteDTO> medicosDTOs = new ArrayList<>();
+        for (Usuario usuario : medicosNoAprobados) {
+            medicosDTOs.add(new MedicoPendienteDTO(usuario));
         }
-        model.addAttribute("medicos", medicosNoAprobados);
-        return "admin/home";
+        return ResponseEntity.ok(medicosDTOs);
     }
 
-    @PostMapping("/aprobar/{id}")
-    public String aprobarMedico(@PathVariable("id") Long id) {
-        usuarioService.aprobarMedico(id);
-        return "redirect:/admin/home";
+    /**
+     * Aprueba un médico específico por su ID.
+     * @return el perfil completo del médico recién aprobado.
+     */
+    @PostMapping("/medicos/aprobar/{id}")
+    public ResponseEntity<MedicoDTO> aprobarMedico(@PathVariable Long id) {
+        Usuario medicoAprobado = usuarioService.aprobarMedico(id);
+
+        return ResponseEntity.ok(new MedicoDTO(medicoAprobado));
     }
 }
