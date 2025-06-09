@@ -1,4 +1,4 @@
-package cr.ac.una.demologinspringboot.presentation;
+package cr.ac.una.demologinspringboot.presentation.citas;
 
 import cr.ac.una.demologinspringboot.dto.entities.CitaDTO;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;

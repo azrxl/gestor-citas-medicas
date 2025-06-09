@@ -1,4 +1,4 @@
-package cr.ac.una.demologinspringboot.dto.entities;
+package cr.ac.una.demologinspringboot.dto.medico;
 
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import lombok.Data;

@@ -1,7 +1,7 @@
-package cr.ac.una.demologinspringboot.presentation;
+package cr.ac.una.demologinspringboot.presentation.admin;
 
-import cr.ac.una.demologinspringboot.dto.entities.MedicoDTO;
-import cr.ac.una.demologinspringboot.dto.entities.MedicoPendienteDTO;
+import cr.ac.una.demologinspringboot.dto.medico.MedicoPublicoDTO;
+import cr.ac.una.demologinspringboot.dto.medico.MedicoPendienteDTO;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +37,9 @@ public class AdminController {
      * @return el perfil completo del médico recién aprobado.
      */
     @PostMapping("/medicos/aprobar/{id}")
-    public ResponseEntity<MedicoDTO> aprobarMedico(@PathVariable Long id) {
+    public ResponseEntity<MedicoPublicoDTO> aprobarMedico(@PathVariable Long id) {
         Usuario medicoAprobado = usuarioService.aprobarMedico(id);
 
-        return ResponseEntity.ok(new MedicoDTO(medicoAprobado));
+        return ResponseEntity.ok(new MedicoPublicoDTO(medicoAprobado));
     }
 }

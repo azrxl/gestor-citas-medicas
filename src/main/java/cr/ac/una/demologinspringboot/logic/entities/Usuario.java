@@ -1,6 +1,6 @@
 package cr.ac.una.demologinspringboot.logic.entities;
 
-import cr.ac.una.demologinspringboot.dto.auth.requests.RegistroRequestDTO;
+import cr.ac.una.demologinspringboot.dto.auth.register.RegistroRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,4 +1,4 @@
-package cr.ac.una.demologinspringboot.dto.view;
+package cr.ac.una.demologinspringboot.dto.ui;
 
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import lombok.Data;

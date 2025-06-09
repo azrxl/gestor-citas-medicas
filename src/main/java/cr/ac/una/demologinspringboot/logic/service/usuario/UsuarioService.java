@@ -1,9 +1,9 @@
 package cr.ac.una.demologinspringboot.logic.service.usuario;
 
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
-import cr.ac.una.demologinspringboot.dto.entities.MedicoUpdateRequestDTO;
-import cr.ac.una.demologinspringboot.dto.view.AppointmentBlock;
-import cr.ac.una.demologinspringboot.dto.view.HomeViewModel;
+import cr.ac.una.demologinspringboot.dto.medico.MedicoUpdateRequestDTO;
+import cr.ac.una.demologinspringboot.dto.ui.AppointmentBlock;
+import cr.ac.una.demologinspringboot.dto.ui.HomeViewModel;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.exceptions.DuplicateResourceException;
@@ -174,7 +174,7 @@ public class UsuarioService {
         return viewModel;
     }
 
-    private List<Usuario> findActiveAndApprovedMedicos(String especialidad, String ciudad) {
+    public List<Usuario> findActiveAndApprovedMedicos(String especialidad, String ciudad) {
         List<Usuario> medicos;
         if (especialidad != null && !especialidad.isEmpty() && ciudad != null && !ciudad.isEmpty()) {
             medicos = this.findUsuarioByRolAndEspecialidadAndLocalidad("MEDICO", especialidad, ciudad);

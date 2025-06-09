@@ -1,14 +1,14 @@
 package cr.ac.una.demologinspringboot.logic.service.citas;
 
 import cr.ac.una.demologinspringboot.data.CitaRepository;
-import cr.ac.una.demologinspringboot.dto.entities.MedicoUpdateRequestDTO;
+import cr.ac.una.demologinspringboot.dto.medico.MedicoUpdateRequestDTO;
+import cr.ac.una.demologinspringboot.dto.schedule.DiaDTO;
 import cr.ac.una.demologinspringboot.logic.exceptions.InvalidScheduleFormatException;
 import cr.ac.una.demologinspringboot.logic.schedule.ScheduleMapper;
 import cr.ac.una.demologinspringboot.logic.schedule.ScheduleParser;
 import cr.ac.una.demologinspringboot.logic.schedule.Scheduler;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.horario.CitaLogic;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +54,7 @@ public class SchedulerService {
         }
     }
 
-        public String scheduleParser(MedicoUpdateRequestDTO request) {
-            return scheduleParser.parse(request.getHorario());
+        public String scheduleParser(Map<String, DiaDTO> horario) {
+            return scheduleParser.parse(horario);
     }
 }

@@ -1,7 +1,7 @@
-package cr.ac.una.demologinspringboot.presentation;
+package cr.ac.una.demologinspringboot.presentation.usuario;
 
-import cr.ac.una.demologinspringboot.dto.view.AppointmentBlock;
-import cr.ac.una.demologinspringboot.dto.view.HomeViewModel;
+import cr.ac.una.demologinspringboot.dto.ui.AppointmentBlock;
+import cr.ac.una.demologinspringboot.dto.ui.HomeViewModel;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.citas.CitaService;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;

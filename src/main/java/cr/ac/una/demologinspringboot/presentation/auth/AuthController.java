@@ -1,9 +1,9 @@
 package cr.ac.una.demologinspringboot.presentation.auth;
 
 
-import cr.ac.una.demologinspringboot.dto.auth.requests.LoginRequestDTO;
-import cr.ac.una.demologinspringboot.dto.auth.responses.LoginResponseDTO;
-import cr.ac.una.demologinspringboot.dto.auth.requests.RegistroRequestDTO;
+import cr.ac.una.demologinspringboot.dto.auth.login.LoginRequestDTO;
+import cr.ac.una.demologinspringboot.dto.auth.login.LoginResponseDTO;
+import cr.ac.una.demologinspringboot.dto.auth.register.RegistroRequestDTO;
 import cr.ac.una.demologinspringboot.dto.entities.UsuarioDTO;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;

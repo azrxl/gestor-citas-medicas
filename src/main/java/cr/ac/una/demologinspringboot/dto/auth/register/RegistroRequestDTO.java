@@ -1,4 +1,4 @@
-package cr.ac.una.demologinspringboot.dto.auth.requests;
+package cr.ac.una.demologinspringboot.dto.auth.register;
 import lombok.Data;
 
 @Data

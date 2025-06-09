@@ -1,7 +1,7 @@
 package cr.ac.una.demologinspringboot.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cr.ac.una.demologinspringboot.dto.auth.responses.ErrorResponseDTO;
+import cr.ac.una.demologinspringboot.dto.exception.ErrorResponseDTO;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
@@ -60,8 +60,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // permitir todos los endpoints del login y register
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/medicos/**").hasRole("MEDICO")
-                        .requestMatchers(("/api/citas/**")).hasRole("PACIENTE")
+                        .requestMatchers("/api/medico/**").hasRole("MEDICO")
+                        .requestMatchers("/api/citas/**", "/api/me/**").hasRole("PACIENTE")
+                        .requestMatchers("/api/medicos/**","/api/filtros/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
