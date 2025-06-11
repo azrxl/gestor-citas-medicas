@@ -42,7 +42,7 @@ public class UsuarioController {
             return "registro";
         }
         try {
-            usuarioService.registrarUsuario(usuario, confirmPassword);
+            usuarioService.registrarUsuario(usuario);
         } catch (IllegalArgumentException e) {
             model.addAttribute("confirmPasswordError", e.getMessage());
             return "registro";

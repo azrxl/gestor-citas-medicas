@@ -80,11 +80,7 @@ public class UsuarioService {
         return usuarioRepository.findDistinctLocalidades().stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public Usuario registrarUsuario(Usuario usuario, String confirmPassword) {
-        if (!usuario.getPassword().equals(confirmPassword)) {
-            throw new IllegalArgumentException("Las contraseñas no coinciden.");
-        }
-
+    public Usuario registrarUsuario(Usuario usuario) {
         if (usuarioRepository.findByLogin(usuario.getLogin()).isPresent()) {
             throw new DuplicateResourceException (
                     "El nombre de usuario '" + usuario.getLogin() + "' o la cedula '" + usuario.getCedula() + "' ya está en uso."
