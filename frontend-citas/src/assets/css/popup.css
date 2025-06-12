@@ -1,0 +1,294 @@
+:root {
+    --color-principal: rgb(0, 0, 0); /* Color base para el texto */
+    --color-oscuro: rgb(0, 0, 0); /* Si tuvieras un color de texto claro */
+    --fuente-base: 0.7em; /* Tamaño de fuente base */
+    --fuente-titulo: 1.5em; /* Tamaño de fuente para títulos */
+}
+
+.wrapper {
+    position: fixed;
+    top: 20%;
+    left: 30%;
+    height: 500px;
+    width: 40%;
+    border: 2px solid rgba(255,255,255,.5);
+    background: transparent;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 50px rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform .7s ease, height .2s ease;
+    transform: scale(0);
+}
+
+.wrapper.active {
+    height: 640px;
+    top: 15%;
+}
+
+.wrapper.active-popup {
+    transform: scale(1);
+}
+
+.wrapper .form-box {
+    height: 100%;
+    width: 100%;
+    padding: 40px;
+}
+
+.wrapper .form-box.login {
+    transition: transform .20s ease;
+    transform: translateX(0);
+}
+
+.wrapper.active .form-box.login {
+    transition: none;
+    transform: translateX(-700px);
+}
+
+.wrapper .form-box.register {
+    position: absolute;
+    transition: none;
+    transform: translateX(700px);
+}
+
+.wrapper.active .form-box.register {
+    position: absolute;
+    transition: transform .20s ease;
+    transform: translateX(0px);
+}
+
+.wrapper .icon-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 45px;
+    background: var(--color-principal);
+    font-size: var(--fuente-titulo);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-left-radius: 20px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+/* Contenedor interno para el scroll */
+.form-container {
+    height: 70%;
+    width: 100%;
+    overflow-y: auto; /* Habilita el scroll vertical */
+    padding-right: 10px; /* Para evitar que el contenido se oculte detrás de la barra de scroll */
+    scrollbar-width: thin; /* Para navegadores que soportan esta propiedad */
+    scrollbar-color: transparent transparent; /* Para navegadores que soportan esta propiedad */
+    border-bottom: 1px solid rgba(2, 0, 7, 0.3);
+}
+
+/* Personalización de la barra de scroll para Chrome, Safari y Opera */
+.form-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.form-box {
+    font-size: var(--fuente-titulo);
+    color: var(--color-principal);
+    text-align: center;
+}
+
+.form-box h2 {
+    color: var(--color-oscuro);
+    letter-spacing: 2px;
+    font-size: 1.7em;
+    margin: 40px 0 0 0;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.form-box h2::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(2, 0, 7, 0.3);
+}
+
+.form-box h2::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background-color: var(--color-principal);
+    border-radius: 2px;
+}
+
+.input-box {
+    position: relative;
+    width: 90%;
+    height: 60px;
+    border-bottom: 2px solid var(--color-principal);
+    margin: 30px;
+}
+
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-size: var(--fuente-base);
+    color: var(--color-principal);
+    font-weight: 500;
+    pointer-events: none;
+    transition: .26s;
+}
+
+.input-box input:focus~label,
+.input-box input:valid~label {
+    top: -5px;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: var(--fuente-base); /* Ajustado a la variable */
+    color: var(--color-principal);
+    font-weight: 600;
+    padding: 20px 35px 0 10px;
+}
+
+.input-box .icon {
+    position: absolute;
+    right: 8px;
+    font-size: 1.2em; /* Puedes mantener este si es un tamaño específico */
+    color: var(--color-principal);
+    line-height: 57px;
+}
+
+.remember-forgot {
+    font-size: .9em; /* Puedes mantener este si es un tamaño específico */
+    color: var(--color-principal);
+    font-weight: 500;
+    margin: 30px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.remember-forgot label input {
+    width: 30px;
+    accent-color: var(--color-principal);
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: var(--color-principal);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.btn {
+    width: 90%;
+    height: 60px;
+    background: transparent;
+    border: 2px solid var(--color-oscuro);
+    outline: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    color: var(--color-oscuro);
+    font-weight: 500;
+    transition: .20s;
+}
+
+.btn:hover {
+    background: var(--color-oscuro);
+    color: #ffffff;
+}
+
+.login-register {
+    font-size: .9em; /* Puedes mantener este si es un tamaño específico */
+    color: var(--color-principal);
+    text-align: center;
+    font-weight: 500;
+    margin: 0 0 10px;
+}
+
+.login-register p a {
+    color: var(--color-principal);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-register p a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo base de la caja del mensaje (.message div) */
+.message {
+    position: absolute;
+    top: 30px;
+    left: 50%; /* Centrar horizontalmente */
+    transform: translateX(-50%); /* Ajuste para centrar */
+    width: 90%; /* O un ancho fijo, o un max-width */
+    max-width: 400px; /* Para que no se estire demasiado en pantallas grandes */
+    padding: 7px 13px;
+    background-color: rgba(200, 200, 220, 0.15);
+    color: var(--color-oscuro); /* El color del texto dentro del mensaje */
+    border-radius: 8px;
+    border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px;
+    font-size: 1em;
+    line-height: 1.5;
+    border-left: 6px solid var(--color-principal); /* Borde izquierdo fuerte */
+    box-shadow: inset 5px 0 10px rgba(106, 17, 203, 0.3); /* Resplandor interior (box-shadow) */
+    text-align: left; /* Alinea el texto a la izquierda dentro de la nota */
+
+    opacity: 0; /* Por defecto, oculto */
+    visibility: hidden; /* Por defecto, no interactuable */
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, border-left-color 0.3s ease, box-shadow 0.3s ease;; /* Transición suave */
+    z-index: 10; /* Para que esté por encima de otros elementos */
+}
+
+.message p { /* Usamos el ID para ser específicos */
+    margin: 0; /* Elimina márgenes por defecto del párrafo */
+    padding: 0; /* Elimina padding por defecto del párrafo */
+    color: inherit; /* Hereda el color del padre (.message) */
+    word-wrap: break-word; /* Asegura que palabras largas no desborden */
+}
+
+.message.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0); /* Si quieres un efecto de deslizamiento */
+}
+
+.message.success {
+    border-left-color: springgreen;
+    box-shadow: inset 5px 0 10px rgba(40, 167, 69, 0.3);
+}
+
+.message.info {
+    border-left-color: deepskyblue;
+    box-shadow: inset 5px 0 10px rgba(0, 191, 255, 0.3);
+}
+
+.message.error {
+    border-left-color: darkred;
+    box-shadow: inset 5px 0 10px rgba(220, 53, 69, 0.3);
+}
