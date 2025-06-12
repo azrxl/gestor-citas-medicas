@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = { "null", "http://localhost:4200", "http://localhost:5173" }, methods = { RequestMethod.POST })
 @RequestMapping("/api/auth")
 public class AuthController {
     private final UsuarioService usuarioService;
@@ -42,13 +43,13 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtUtil.generateToken(authentication);
-        return ResponseEntity.ok(new LoginResponseDTO(token, loginRequestDTO.getLogin()));
+        return ResponseEntity.ok(new LoginResponseDTO(loginRequestDTO.getLogin(), token));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UsuarioDTO> registrarUsuario(@RequestBody @Valid RegistroRequestDTO registroRequestDTO) {
+    public ResponseEntity<String> registrarUsuario(@RequestBody @Valid RegistroRequestDTO registroRequestDTO) {
         Usuario usuario = new Usuario(registroRequestDTO);
         Usuario registrado = usuarioService.registrarUsuario(usuario);
-        return new ResponseEntity<>(new UsuarioDTO(registrado), HttpStatus.CREATED);
+        return new ResponseEntity<>("Usuario registrado correctamente", HttpStatus.CREATED);
     }
 }

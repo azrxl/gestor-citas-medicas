@@ -138,7 +138,7 @@ public class UsuarioService {
     }
 
     public HomeViewModel prepararHomeViewModel(String especialidad, String ciudad) {
-        List<Usuario> medicos = this.findActiveAndApprovedMedicos(especialidad, ciudad);
+        List<Usuario> medicos = this.findActiveAndApprovedMedicosWithCitas(especialidad, ciudad);
         List<String> especialidades = this.findUsuarioDistinctEspecialidad();
         List<String> ciudades = this.findUsuarioDistinctLocalidades();
 
@@ -170,7 +170,7 @@ public class UsuarioService {
         return viewModel;
     }
 
-    public List<Usuario> findActiveAndApprovedMedicos(String especialidad, String ciudad) {
+    public List<Usuario> findActiveAndApprovedMedicosWithCitas(String especialidad, String ciudad) {
         List<Usuario> medicos;
         if (especialidad != null && !especialidad.isEmpty() && ciudad != null && !ciudad.isEmpty()) {
             medicos = this.findUsuarioByRolAndEspecialidadAndLocalidad("MEDICO", especialidad, ciudad);
@@ -185,6 +185,10 @@ public class UsuarioService {
         return medicos.stream()
                 .filter(Usuario::getAprobado)
                 .filter(Usuario::isProfileComplete)
+                .filter(m -> {
+                    List<Cita> citasActivas = citaService.findCitasActivasByMedico(m.getLogin());
+                    return citasActivas != null && !citasActivas.isEmpty();
+                })
                 .collect(Collectors.toList());
     }
 }

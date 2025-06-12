@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 @Data
 public class MedicoPublicoDTO {
     private Long id;
-    private String nombreCompleto;
+    private String nombre;
+    private String apellido;
     private String especialidad;
     private BigDecimal costoConsulta;
     private String localidad;
@@ -18,7 +19,8 @@ public class MedicoPublicoDTO {
             throw new IllegalArgumentException("Este DTO solo puede ser usado para usuarios con rol MEDICO.");
         }
         this.id = usuario.getId();
-        this.nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
+        this.nombre = usuario.getNombre();
+        this.apellido = usuario.getApellido();
         this.especialidad = usuario.getEspecialidad();
         this.costoConsulta = usuario.getCostoConsulta();
         this.localidad = usuario.getLocalidad();
