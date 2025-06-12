@@ -33,12 +33,8 @@
     <!-- Mostrar botones de acción solo si la cita está ACTIVA -->
     <div th:if="${cita.get().estado == 'ACTIVA'}">
       <a th:href="@{/cita/confirmar/{id}(id=${cita.get().id})}" class="button">Aceptar</a>
-      <a th:href="@{/cita/cancelar/{id}(id=${cita.get().id})}" class="button">Cancelar</a>
     </div>
-    <!-- En caso contrario, se muestra un mensaje informativo -->
-    <div th:if="${cita.get().estado != 'ACTIVA'}">
-      <p>Esta cita ya se encuentra reservada.</p>
-    </div>
+    <a th:href="@{/cita/cancelar/{id}(id=${cita.get().id})}" class="button">Cancelar</a>
   </div>
 </main>
 

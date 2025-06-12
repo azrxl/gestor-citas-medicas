@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,6 +18,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -55,13 +61,14 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        http    .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable) // no CSRF para APIs stateless
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // permitir todos los endpoints del login y register
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/medico/**").hasRole("MEDICO")
-                        .requestMatchers("/api/citas/**", "/api/me/**").hasRole("PACIENTE")
+                        .requestMatchers("/api/citas/**").hasRole("PACIENTE")
+                        .requestMatchers("/api/me/**").hasAnyRole("PACIENTE", "MEDICO")
                         .requestMatchers("/api/medicos/**","/api/filtros/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -83,7 +90,22 @@ public class SecurityConfig {
 
         return http.build();
     }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // Especifica el origen de tu frontend
+        configuration.setAllowedOrigins(List.of("http://localhost:5174", "http://localhost:5173"));
+        // Especifica los métodos HTTP permitidos
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Permite todas las cabeceras
+        configuration.setAllowedHeaders(List.of("*"));
+        // Permite credenciales (necesario para tokens)
+        configuration.setAllowCredentials(true);
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Aplica esta configuración a todas las rutas de tu API
+        source.registerCorsConfiguration("/api/**", configuration);
 
-
+        return source;
+    }
 }

@@ -6,9 +6,11 @@ import lombok.Data;
 public class LoginResponseDTO {
     private String username;
     private String token;
+    private String rol;
 
-    public LoginResponseDTO(String username, String token) {
+    public LoginResponseDTO(String username, String token, String rol) {
         this.username = username;
         this.token = token;
+        this.rol = rol;
     }
 }

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = { "null", "http://localhost:4200", "http://localhost:5173" }, methods = { RequestMethod.POST, RequestMethod.GET })
 @RequestMapping("/api/medicos")
 public class MedicosController {
     private final UsuarioService usuarioService;
@@ -59,5 +58,14 @@ public class MedicosController {
         }
 
         return ResponseEntity.ok(medicosConCitas);
+    }
+
+    @GetMapping("/{id}/citas")
+    public ResponseEntity<List<Cita>> getHorarioCompletoMedico(@PathVariable Long id) {
+
+        Usuario medico = usuarioService.findUsuarioByIdOrThrow(id);
+
+        List<Cita> todasLasCitasDelMedico = citaService.findCitasByLoginMedico(medico.getLogin());
+        return ResponseEntity.ok(todasLasCitasDelMedico);
     }
 }

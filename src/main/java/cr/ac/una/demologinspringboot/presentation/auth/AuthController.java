@@ -19,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = { "null", "http://localhost:4200", "http://localhost:5173" }, methods = { RequestMethod.POST })
 @RequestMapping("/api/auth")
 public class AuthController {
     private final UsuarioService usuarioService;
@@ -43,7 +42,8 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtUtil.generateToken(authentication);
-        return ResponseEntity.ok(new LoginResponseDTO(loginRequestDTO.getLogin(), token));
+        Usuario usuario = usuarioService.findUsuarioByLoginOrThrow(loginRequestDTO.getLogin());
+        return ResponseEntity.ok(new LoginResponseDTO(loginRequestDTO.getLogin(), token, usuario.getRol()));
     }
 
     @PostMapping("/register")

@@ -100,3 +100,6 @@ VALUES
     (48, 'a', 'DISPONIBLE', '2025-07-07', '14:00:00', '14:20:00', 'ACTIVA'),
     (49, 'a', 'DISPONIBLE', '2025-07-07', '14:20:00', '14:40:00', 'ACTIVA'),
     (50, 'a', 'DISPONIBLE', '2025-07-07', '14:40:00', '15:00:00', 'ACTIVA');
+UPDATE citas
+SET login_paciente = NULL
+WHERE estado = 'ACTIVA';

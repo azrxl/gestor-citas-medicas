@@ -1,7 +1,11 @@
 package cr.ac.una.demologinspringboot.logic.service.usuario;
 
 import cr.ac.una.demologinspringboot.data.UsuarioRepository;
+import cr.ac.una.demologinspringboot.dto.admin.MedicoApprovalDTO;
 import cr.ac.una.demologinspringboot.dto.medico.MedicoUpdateRequestDTO;
+import cr.ac.una.demologinspringboot.dto.perfil.AppointmentBlockDTO;
+import cr.ac.una.demologinspringboot.dto.perfil.PerfilResponseDTO;
+import cr.ac.una.demologinspringboot.dto.perfil.UsuarioProfileDTO;
 import cr.ac.una.demologinspringboot.dto.ui.AppointmentBlock;
 import cr.ac.una.demologinspringboot.dto.ui.HomeViewModel;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
@@ -82,7 +86,7 @@ public class UsuarioService {
 
     public Usuario registrarUsuario(Usuario usuario) {
         if (usuarioRepository.findByLogin(usuario.getLogin()).isPresent()) {
-            throw new DuplicateResourceException (
+            throw new DuplicateResourceException(
                     "El nombre de usuario '" + usuario.getLogin() + "' o la cedula '" + usuario.getCedula() + "' ya está en uso."
             );
         }
@@ -93,7 +97,7 @@ public class UsuarioService {
         try {
             usuarioRepository.save(usuario);
         } catch (DataIntegrityViolationException e) {
-            throw new DuplicateResourceException (
+            throw new DuplicateResourceException(
                     "El nombre de usuario '" + usuario.getLogin() + "' o la cedula '" + usuario.getCedula() + "' ya está en uso."
             );
         }
@@ -191,4 +195,35 @@ public class UsuarioService {
                 })
                 .collect(Collectors.toList());
     }
+
+    // Convierte entidad Usuario -> UsuarioProfileDTO
+    public UsuarioProfileDTO toProfileDto(Usuario u) {
+        UsuarioProfileDTO dto = new UsuarioProfileDTO();
+        dto.setId(u.getId());
+        dto.setLogin(u.getLogin());
+        dto.setNombre(u.getNombre());
+        dto.setApellido(u.getApellido());
+        dto.setRol(u.getRol());
+        if ("MEDICO".equals(u.getRol())) {
+            dto.setCedula(u.getCedula());
+            dto.setEspecialidad(u.getEspecialidad());
+            dto.setLocalidad(u.getLocalidad());
+            dto.setCostoConsulta(u.getCostoConsulta());
+        }
+        return dto;
+    }
+
+    public List<MedicoApprovalDTO> getMedicosForAdmin() {
+        List<Usuario> pendientes = usuarioRepository.findByRol("MEDICO");
+        return pendientes.stream().map(u -> {
+            MedicoApprovalDTO dto = new MedicoApprovalDTO();
+            dto.setId(u.getId());
+            dto.setLogin(u.getLogin());
+            dto.setNombre(u.getNombre());
+            dto.setApellido(u.getApellido());
+            dto.setAprobado(u.getAprobado());
+            return dto;
+        }).toList();
+    }
+
 }
