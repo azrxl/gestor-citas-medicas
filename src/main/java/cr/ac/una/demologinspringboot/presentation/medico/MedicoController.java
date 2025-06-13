@@ -1,11 +1,13 @@
 package cr.ac.una.demologinspringboot.presentation.medico;
 
 import cr.ac.una.demologinspringboot.dto.entities.CitaDTO;
+import cr.ac.una.demologinspringboot.dto.medico.MedicoProfileDTO;
 import cr.ac.una.demologinspringboot.dto.medico.MedicoPublicoDTO;
 import cr.ac.una.demologinspringboot.dto.entities.UsuarioDTO;
 import cr.ac.una.demologinspringboot.dto.medico.MedicoUpdateRequestDTO;
 import cr.ac.una.demologinspringboot.logic.entities.Cita;
 import cr.ac.una.demologinspringboot.logic.entities.Usuario;
+import cr.ac.una.demologinspringboot.logic.schedule.ScheduleParser;
 import cr.ac.una.demologinspringboot.logic.service.citas.CitaService;
 import cr.ac.una.demologinspringboot.logic.service.citas.SchedulerService;
 import cr.ac.una.demologinspringboot.logic.service.usuario.UsuarioService;
@@ -24,28 +26,65 @@ public class MedicoController {
 
     private final UsuarioService usuarioService;
     private final CitaService citaService;
-    private final SchedulerService schedulerService;
+    private final ScheduleParser scheduleParser;
 
-    public MedicoController(UsuarioService usuarioService, CitaService citaService, SchedulerService schedulerService) {
+    public MedicoController(UsuarioService usuarioService, CitaService citaService, SchedulerService schedulerService, ScheduleParser scheduleParser) {
         this.usuarioService = usuarioService;
         this.citaService = citaService;
-        this.schedulerService = schedulerService;
+        this.scheduleParser = scheduleParser;
     }
 
     @GetMapping("/me/completar")
-    public ResponseEntity<UsuarioDTO> verPerfil(Authentication authentication) {
+    public ResponseEntity<MedicoProfileDTO> verPerfil(Authentication authentication) {
         Usuario medico = usuarioService.findUsuarioByLoginOrThrow(authentication.getName());
-        return ResponseEntity.ok(new UsuarioDTO(medico));
+
+        if (!"MEDICO".equals(medico.getRol())) {
+            throw new IllegalArgumentException("Este endpoint solo es para médicos.");
+        }
+
+        MedicoProfileDTO dto = new MedicoProfileDTO();
+        dto.setId(medico.getId());
+        dto.setCedula(medico.getCedula());
+        dto.setNombre(medico.getNombre());
+        dto.setApellido(medico.getApellido());
+        dto.setLogin(medico.getLogin());
+        dto.setEspecialidad(medico.getEspecialidad());
+        dto.setCostoConsulta(medico.getCostoConsulta());
+        dto.setLocalidad(medico.getLocalidad());
+        dto.setFrecuenciaCita(medico.getFrecuenciaCita());
+        dto.setHorario(scheduleParser.deserialize(medico.getHorarioSemanal())); // Nueva función
+
+        return ResponseEntity.ok(dto);
     }
+
 
     @PutMapping("/me/completar")
-    public ResponseEntity<UsuarioDTO> completarPerfil(@RequestBody @Valid MedicoUpdateRequestDTO medicoRequestDTO, Authentication authentication) {
-        String horarioSemanal = schedulerService.scheduleParser(medicoRequestDTO.getHorario());
-        String medicoLogin = authentication.getName();
-        Usuario medicoActualizado = usuarioService.completarMedico(medicoLogin, medicoRequestDTO, horarioSemanal);
+    public ResponseEntity<MedicoProfileDTO> completarPerfil(
+            @RequestBody @Valid MedicoUpdateRequestDTO req,
+            Authentication auth
+    ) {
+        String horarioSemanal = scheduleParser.parse(req.getHorario());
+        Usuario mActualizado = usuarioService.completarMedico(
+                auth.getName(), req, horarioSemanal
+        );
 
-        return ResponseEntity.ok(new UsuarioDTO(medicoActualizado));
+        // Reconstruyo el DTO idéntico al GET /me/completar
+        MedicoProfileDTO dto = new MedicoProfileDTO();
+        dto.setId(mActualizado.getId());
+        dto.setCedula(mActualizado.getCedula());
+        dto.setNombre(mActualizado.getNombre());
+        dto.setApellido(mActualizado.getApellido());
+        dto.setLogin(mActualizado.getLogin());
+        dto.setEspecialidad(mActualizado.getEspecialidad());
+        dto.setCostoConsulta(mActualizado.getCostoConsulta());
+        dto.setLocalidad(mActualizado.getLocalidad());
+        dto.setFrecuenciaCita(mActualizado.getFrecuenciaCita());
+        // Muy importante: vuelve a deserializar el string
+        dto.setHorario(scheduleParser.deserialize(mActualizado.getHorarioSemanal()));
+
+        return ResponseEntity.ok(dto);
     }
+
 
     @GetMapping("/me/perfil")
     public ResponseEntity<MedicoPublicoDTO> getMyProfile(Authentication authentication) {

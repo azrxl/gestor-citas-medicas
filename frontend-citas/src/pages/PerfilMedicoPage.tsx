@@ -1,4 +1,4 @@
-// src/pages/PerfilMedico.tsx
+// src/pages/PerfilMedicoPage.tsx
 
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { getHorarioCompletoPorMedico } from '../api/CitasService.ts';
 import type { Medico, BloqueCita } from '../types/types.ts';
 import LoadingSpinner from '../components/loading/LoadingSpinner.tsx';
 
-function PerfilMedico() {
+export const PerfilMedicoPage = () => {
     // 1. OBTENER EL ID DE LA URL
     // useParams nos da el parámetro :medicoId que definimos en el router
     const { medicoId } = useParams<{ medicoId: string }>();
@@ -83,7 +83,7 @@ function PerfilMedico() {
 
             <div className="profile">
                 <div className="profile-header">
-                    <img src="../../public/medical-logo.jpg" alt={`Foto de ${medico.nombre}`} />
+                    <img src="../../public/img/medical-logo.jpg" alt={`Foto de ${medico.nombre}`} />
                     <h2>{medico.nombre} {medico.apellido}</h2>
                     <p><strong>Especialidad:</strong> <span>{medico.especialidad}</span></p>
                     <p><strong>Localidad:</strong> <span>{medico.localidad}</span></p>
@@ -121,6 +121,4 @@ function PerfilMedico() {
             </div>
         </>
     );
-}
-
-export default PerfilMedico;
+};

@@ -45,6 +45,7 @@ export interface LoginResponse {
     username: string;
     token: string;
     rol: "PACIENTE" | "MEDICO" | "ADMIN";
+    profileComplete: boolean;
 }
 
 export interface RegisterPayload {
@@ -74,6 +75,7 @@ export interface User {
     username: string;
     token: string;
     rol: 'PACIENTE' | 'MEDICO' | "ADMIN"; // <-- AÑADIR ESTA LÍNEA
+    profileComplete: boolean;
 }
 
 export interface AuthContextType {

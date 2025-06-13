@@ -1,0 +1,117 @@
+/* Estilos específicos para la página de login para darle más "vida" */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #8bc6ec, #cce0f5); /* Un degradado suave */
+    animation: gradientAnimation 10s ease infinite; /* Animación de fondo */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la ventana */
+    padding: 20px; /* Añade un pequeño padding general al body */
+    box-sizing: border-box;
+    width: 80%;
+}
+
+.main {
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.95); /* Blanco con ligera transparencia */
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    animation: fadeIn 0.5s ease-out forwards; /* Animación de entrada */
+    width: 80%;
+    margin: 120px 0; /* Añade márgenes arriba y abajo del main */
+    margin-left: 60px;
+}
+
+.main h1 {
+    color: #377ba8; /* Un azul más atractivo */
+    text-shadow: 1px 1px #e0f2f7; /* Ligera sombra en el texto */
+}
+
+.main form label {
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+    text-align: left;
+}
+
+.main form input {
+    padding: 12px;
+    border: 1px solid #b0e0e6; /* Borde más suave */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    width: calc(100% - 24px);
+    box-sizing: border-box;
+    transition: border-color 0.3s ease; /* Transición suave del borde */
+}
+
+.main form input:focus {
+    border-color: #4dabf5;
+    outline: none;
+    box-shadow: 0 0 5px rgba(67, 170, 255, 0.5); /* Sombra al enfocar */
+}
+
+.wrap button {
+    background-color: rgba(111, 192, 224, 0.94);
+    color: #9c9c9c;
+    font-size: 15px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    padding: 10px 15px;
+}
+
+.wrap button:hover {
+    background-color: #7dc3fc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ligera sombra al pasar el ratón */
+}
+
+.main p {
+    margin-top: 25px;
+    color: #777;
+}
+
+.main a {
+    color: #377ba8;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.main a:hover {
+    text-decoration: underline;
+    color: #29628f;
+}
+
+.error-message, .success-message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ef9a9a;
+}
+
+.success-message {
+    background-color: #e8f5e9;
+    color: #388e3c;
+    border: 1px solid #a5d6a7;
+}
+
+select:focus {
+    border-color: #4dd0e1; /* Color de foco más claro */
+    outline: none;
+    box-shadow: 0 0 5px rgba(77, 208, 225, 0.5);
+}
+
+/* Estilos para las opciones dentro del combobox (opcional) */
+select option {
+    padding: 8px;
+    font-size: 16px;
+    color: #333;
+}

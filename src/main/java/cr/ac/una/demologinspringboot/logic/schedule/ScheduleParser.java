@@ -4,10 +4,7 @@ import cr.ac.una.demologinspringboot.dto.schedule.DiaDTO;
 import cr.ac.una.demologinspringboot.dto.schedule.IntervaloDTO;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 
 @Component
@@ -33,6 +30,58 @@ public class ScheduleParser {
 
         return scheduleJoiner.toString();
     }
+
+    public Map<String, DiaDTO> deserialize(String horarioSemanal) {
+        if (horarioSemanal == null || horarioSemanal.isBlank()) {
+            // Retornar un horario vacío de 7 días por defecto
+            String[] diasSemana = {"Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"};
+            Map<String, DiaDTO> mapa = new LinkedHashMap<>();
+
+            for (String dia : diasSemana) {
+                DiaDTO dto = new DiaDTO();
+                dto.setManana(new IntervaloDTO());
+                dto.setTarde(new IntervaloDTO());
+                mapa.put(dia, dto);
+            }
+
+            return mapa;
+        }
+
+        // Continuar con la lógica normal si no es null
+        String[] dias = horarioSemanal.split(";");
+        String[] diasSemana = {"Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"};
+
+        Map<String, DiaDTO> mapa = new LinkedHashMap<>();
+
+        for (int i = 0; i < diasSemana.length; i++) {
+            String dia = diasSemana[i];
+            DiaDTO dto = new DiaDTO();
+            dto.setManana(new IntervaloDTO());
+            dto.setTarde(new IntervaloDTO());
+
+            if (i >= dias.length || dias[i].isEmpty()) {
+                mapa.put(dia, dto);
+                continue;
+            }
+
+            String[] bloques = dias[i].split(",");
+            if (bloques.length > 0 && bloques[0].contains("-")) {
+                String[] partes = bloques[0].split("-");
+                dto.getManana().setInicio(partes[0] + ":00");
+                dto.getManana().setFin(partes[1] + ":00");
+            }
+            if (bloques.length > 1 && bloques[1].contains("-")) {
+                String[] partes = bloques[1].split("-");
+                dto.getTarde().setInicio(partes[0] + ":00");
+                dto.getTarde().setFin(partes[1] + ":00");
+            }
+
+            mapa.put(dia, dto);
+        }
+
+        return mapa;
+    }
+
 
     // ANÁLISIS Y CAMBIOS: Los métodos privados ahora operan sobre el DTO.
     private boolean isValidInterval(IntervaloDTO intervalo) {

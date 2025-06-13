@@ -42,8 +42,12 @@ public class AuthController {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtUtil.generateToken(authentication);
-        Usuario usuario = usuarioService.findUsuarioByLoginOrThrow(loginRequestDTO.getLogin());
-        return ResponseEntity.ok(new LoginResponseDTO(loginRequestDTO.getLogin(), token, usuario.getRol()));
+        Usuario u = usuarioService.findUsuarioByLoginOrThrow(loginRequestDTO.getLogin());
+        boolean complete = u.getEspecialidad() != null
+                && u.getLocalidad() != null
+                && u.getFrecuenciaCita() != null
+                && u.getHorarioSemanal() != null;
+        return ResponseEntity.ok(new LoginResponseDTO(loginRequestDTO.getLogin(), token, u.getRol()));
     }
 
     @PostMapping("/register")

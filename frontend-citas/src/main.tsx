@@ -16,11 +16,12 @@ import './index.css'; // Si tienes estilos base
 // --- Importa tus componentes ---
 import AppLayout from './AppLayout.tsx'; // El "marco"
 import HomePaciente from './components/home/HomePaciente.tsx'; // Una "página"
-import PerfilMedico from './pages/PerfilMedico.tsx';
+import {PerfilMedicoPage} from './pages/PerfilMedicoPage.tsx';
 import {PerfilPage} from "./pages/PerfilPage.tsx";
-import {AdminRoute} from "./components/admin/AdminApproval.tsx";
+import {AdminRoute} from "./components/admin/AdminRoute.tsx";
 import {AdminApprovalPanel} from "./components/admin/AdminApprovalPanel.tsx";
 import {UserRoute} from "./components/user/UserRoute.tsx";
+import {EditProfilePage} from "./pages/EditProfilePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -36,11 +37,15 @@ const router = createBrowserRouter([
                     },
                     {
                         path: 'perfil-medico/:medicoId', // Perfil público de un médico
-                        element: <PerfilMedico />,
+                        element: <PerfilMedicoPage />,
                     },
                     {
                         path: 'perfil', // Perfil propio del usuario logueado
                         element: <PerfilPage />,
+                    },
+                    {
+                        path: 'medico/completar',
+                        element: <EditProfilePage />,
                     }
                 ]
             },

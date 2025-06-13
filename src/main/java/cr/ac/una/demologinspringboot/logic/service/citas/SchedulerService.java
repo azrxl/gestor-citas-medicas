@@ -57,4 +57,5 @@ public class SchedulerService {
         public String scheduleParser(Map<String, DiaDTO> horario) {
             return scheduleParser.parse(horario);
     }
+
 }

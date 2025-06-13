@@ -50,7 +50,9 @@ const Auth: FC<AuthProps> = ({isPopupActive, toggleAuthPopup, message, setMessag
         try {
             const userData: LoginResponse = await loginUser(loginCredentials);
             login(userData);
-            if (userData.rol === 'ADMIN') {
+            if (userData.rol === 'MEDICO' && !userData.profileComplete) {
+                navigate('/medico/completar');
+            } else if (userData.rol === 'ADMIN') {
                 navigate('/admin/aprobaciones');
             }
 

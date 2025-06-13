@@ -77,7 +77,7 @@ public class SecurityConfig {
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                                     HttpServletResponse.SC_FORBIDDEN, // 403
-                                    "Forbidden",
+                                    "No acceso a este recurso",
                                     "No tienes los permisos necesarios para acceder a este recurso.",
                                     request.getRequestURI()
                             );

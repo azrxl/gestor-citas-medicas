@@ -24,7 +24,6 @@ public class Cita {
     private String loginMedico;
 
     @Size(max = 50)
-    @NotNull
     @Column(name = "login_paciente", nullable = false, length = 50)
     private String loginPaciente;
 
